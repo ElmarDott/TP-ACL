@@ -1,0 +1,13 @@
+/target/
+/nbproject/
+/nbactions.xml
+/nb-configuration.xml
+/.idea/
+/.classpath
+/.project
+/.settings
+/*.iml
+/*.log
+/*.log.*
+/cobertura.ser
+/faces-config.NavData

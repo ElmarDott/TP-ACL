@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                        http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>ACL</name>
+    <description>Access Control List</description>
+    <parent>
+        <groupId>io.github.together</groupId>
+        <artifactId>build-workflow</artifactId>
+        <version>1.2</version>
+    </parent>
+
+    <groupId>io.github.together.modules</groupId>
+    <artifactId>acl</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <skipCoveralls>true</skipCoveralls>
+        <skipJarSigner>false</skipJarSigner>
+        <skipJavaDoc>false</skipJavaDoc>
+        <skipTests>false</skipTests>
+        <skipEnforcer>false</skipEnforcer>
+    </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/ElmarDott/TP-ACL.git</connection>
+        <developerConnection>scm:git:file://media/veracrypt1/repositories/git-togetherPlatform/Modules/ACL</developerConnection>
+        <url>scm:git:https://github.com/ElmarDott/TP-ACL.git</url>
+    </scm>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/ElmarDott/TP-ACL</url>
+    </ciManagement>
+
+    <!-- Jira issue management -->
+    <issueManagement>
+        <system>IssueTracking@Github</system>
+        <url><![CDATA[https://github.com/ElmarDott/TP-ACL/issues?sort=created&direction=desc&state=open]]></url>
+    </issueManagement>
+
+    <build>
+        <filters>
+            <filter>src/main/filter/module.properties</filter>
+        </filters>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultEntries/>
+                            <addDefaultImplementationEntries/>
+                            <addDefaultSpecificationEntries/>
+                            <addBuildEnvironmentEntries/>
+                        </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>${groupId}.${artifactId}</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <configuration>
+                    <skip>${skipCoveralls}</skip>
+                    <repoToken>${coveralls.token.tpCore}</repoToken>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.together.modules</groupId>
+            <artifactId>core</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+
+        <!-- Bundels -->
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-jarkarta</artifactId>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-logging</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-spring</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-hibernate</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-spring-security</artifactId>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+</project>
