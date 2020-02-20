@@ -1,5 +1,6 @@
 package org.europa.together.utils.acl;
 
+import java.util.TimeZone;
 import org.europa.together.application.PropertyFileReader;
 import org.europa.together.business.PropertyReader;
 
@@ -34,6 +35,11 @@ public final class Constraints {
      * The Software License of the artifact.
      */
     public static final String LICENSE = "Apache License 2.0";
+
+    /**
+     * The default timezone is used by the artifact.
+     */
+    public static final TimeZone SYSTEM_DEFAULT_TIMEZONE = TimeZone.getTimeZone("UTC");
 
     /**
      * Implements a static version of toString();.

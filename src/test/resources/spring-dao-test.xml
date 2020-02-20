@@ -49,6 +49,7 @@
 
         <property name="jpaProperties">
             <props>
+                <prop key="hibernate.jdbc.time_zone">UTC</prop>
                 <prop key="javax.persistence.query.timeout">1000</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL95Dialect</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
