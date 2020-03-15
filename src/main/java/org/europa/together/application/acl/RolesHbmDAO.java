@@ -35,11 +35,16 @@ public class RolesHbmDAO extends GenericHbmDAO<RolesDO, String> implements Roles
     public boolean delete(final String roleName) {
         boolean success = false;
         RolesDO role = find(roleName);
-        if (role.isDeleteable()) {
-            mainEntityManagerFactory.remove(role);
-            success = true;
+        if (role != null) {
+            if (role.isDeleteable()) {
+                mainEntityManagerFactory.remove(role);
+                success = true;
+            } else {
+                LOGGER.log("Role(" + role.getName() + ") can't deleted, because it is protected.",
+                        LogLevel.DEBUG);
+            }
         } else {
-            LOGGER.log("Role(" + role.getName() + ") can't deleted, because it is protected.",
+            LOGGER.log("Role(" + roleName + ") don't exist.",
                     LogLevel.DEBUG);
         }
         return success;

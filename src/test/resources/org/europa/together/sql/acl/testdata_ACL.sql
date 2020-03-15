@@ -12,6 +12,7 @@ INSERT INTO RESOURCES (RESOURCE, TEMPLATE, ACTIONS, DELETEABLE) VALUES ('Article
 
 --- ROLES
 INSERT INTO ROLES (NAME, DELETEABLE, DESCRIPTION) VALUES ('Sample', true, 'Role to test delete when Permission exist.');
+INSERT INTO ROLES (NAME, DELETEABLE, DESCRIPTION) VALUES ('Temp', true, 'Role to test delete when Permission exist.');
 INSERT INTO ROLES (NAME, DELETEABLE, DESCRIPTION) VALUES ('Guest', false, 'Default Role for all new Users.');
 INSERT INTO ROLES (NAME, DELETEABLE, DESCRIPTION) VALUES ('User', false, 'After a simple validation process of an existing EMail address.');
 INSERT INTO ROLES (NAME, DELETEABLE, DESCRIPTION) VALUES ('Moderator', true, 'Higher privileged role than a standard user.');

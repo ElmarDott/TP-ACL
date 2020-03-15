@@ -28,7 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:./spring-dao-test.xml"})
+@ContextConfiguration(locations = {"classpath:/org/europa/together/configuration/spring-dao-test.xml"})
 public class RolesHbmDAOTest {
 
     private static final Logger LOGGER = new LogbackLogger(RolesHbmDAOTest.class);
