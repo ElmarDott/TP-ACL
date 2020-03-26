@@ -12,6 +12,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.apiguardian.api.API;
+import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.RolesDAO;
@@ -30,7 +32,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-@Path(Constraints.MODULE_NAME)
+@Path(Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION)
 public class RoleService {
 
     private static final Logger LOGGER = new LogbackLogger(RoleService.class);
@@ -46,6 +48,7 @@ public class RoleService {
     @GET
     @Path("/role/{role}")
     @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
     public Response fetchRole(final @PathParam("role") String roleName) {
         Response response = null;
         try {
@@ -70,6 +73,7 @@ public class RoleService {
     @GET
     @Path("/role/protected")
     @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
     public Response fetchProtectedRoles() {
         Response response = null;
         try {
@@ -91,6 +95,7 @@ public class RoleService {
     @GET
     @Path("/role")
     @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
     public Response fetchAllRoles() {
         Response response = null;
         try {
@@ -112,6 +117,7 @@ public class RoleService {
     @PUT
     @Path("/role")
     @Consumes({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
     public Response updateRole(final RolesDO role) {
         Response response = null;
         try {
@@ -131,6 +137,7 @@ public class RoleService {
     @POST
     @Path("/role")
     @Consumes({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
     public Response createRole(final RolesDO role) {
         Response response = null;
         try {
@@ -146,6 +153,7 @@ public class RoleService {
 
     @DELETE
     @Path("/role/{role}")
+    @API(status = STABLE, since = "1")
     public Response deleteRole(final @PathParam("role") String roleName) {
         Response response = null;
         try {
@@ -177,6 +185,7 @@ public class RoleService {
         return response;
     }
 
+    // #########################################################################
     private String objectListToJson(final List<RolesDO> roles) {
         StringBuilder json = new StringBuilder();
         json.append("{\"list\": [\n");

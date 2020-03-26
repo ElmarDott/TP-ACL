@@ -7,7 +7,9 @@ The ACL Artifact is a implementation of an Access Control List.
 Components - Release: 1.0
  * [ACL-001] Domain Objects (DO)
  * [ACL-002] Data Access Objects (DAO)
- * [ACL-003] Services (RESTful)
+ * [ACL-003] RoleService (RESTful)
+ * [ACL-004] AccountService (RESTful)
+ * [ACL-005] ResourceService (RESTful)
 
 Basic concepts of this project are: KISS (Keep it simple, stupid), COC (Convention
 over configurations) and DRY (Don't repeat yourself). Also we following the programming
@@ -88,6 +90,7 @@ In the case you like this project, let me know it and rate it with a star.
 | 1.0    | in process
 |        | - Add Functionality: Domain Model
 |        | - Add Functionality: Domain Access Objects
+|        | - Add Functionality: RESTful services
 
 
 

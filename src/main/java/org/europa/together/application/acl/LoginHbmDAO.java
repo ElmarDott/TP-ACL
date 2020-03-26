@@ -39,7 +39,8 @@ public class LoginHbmDAO extends GenericHbmDAO<LoginDO, String> implements Login
         CriteriaQuery<LoginDO> query = builder.createQuery(LoginDO.class);
         // create Criteria
         Root<LoginDO> root = query.from(LoginDO.class);
-        query.where(builder.equal(root.get("account"), new AccountDO(account)));
+        query.where(builder.equal(root.get("account"), new AccountDO(account)))
+                .orderBy(builder.desc(root.get("loginDate")));
 
         return mainEntityManagerFactory.createQuery(query).getResultList();
     }

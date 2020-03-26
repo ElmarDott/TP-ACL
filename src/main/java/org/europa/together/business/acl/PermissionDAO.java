@@ -27,6 +27,7 @@ public interface PermissionDAO extends GenericDAO<PermissionDO, PermissionId> {
      * @param permissionId as String
      * @return PermissionDO as Object
      */
+    @API(status = STABLE, since = "1.0")
     PermissionDO find(String permissionId);
 
     /**

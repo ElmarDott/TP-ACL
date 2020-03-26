@@ -102,23 +102,12 @@ public class AccountHbmDAOTest {
 
     @Test
     void testCreateAccountWithRole() {
-        LOGGER.log("TEST CASE: createAccount", LogLevel.DEBUG);
+        LOGGER.log("TEST CASE: createAccountWithRole", LogLevel.DEBUG);
 
-        RolesDO role = new RolesDO("Guest");
-        rolesDAO.create(role);
-
+        actions.executeSqlFromClasspath(FILE);
         AccountDO account = new AccountDO("create@sample.org");
+        account.setRole(rolesDAO.find("Guest"));
         assertTrue(accountDAO.create(account));
-    }
-
-    @Test
-    void testFailCreateAccountWhitoutRole() throws Exception {
-        LOGGER.log("TEST CASE: FailCreateAccountWhitoutRole", LogLevel.DEBUG);
-
-        AccountDO account = new AccountDO("fail@sample.org");
-        assertThrows(Exception.class, () -> {
-            accountDAO.create(account);
-        });
     }
 
     @Test
@@ -179,6 +168,22 @@ public class AccountHbmDAOTest {
 
         actions.executeSqlFromClasspath(FILE);
         assertEquals(1, accountDAO.listNotConfirmedAccounts().size());
+    }
+
+    @Test
+    void testVerifyAccount() {
+        LOGGER.log("TEST CASE: verifyAccounts", LogLevel.DEBUG);
+
+        actions.executeSqlFromClasspath(FILE);
+        assertTrue(accountDAO.verifyAccount("moderator_02@sample.org"));
+    }
+
+    @Test
+    void testFailVerifyAccount() {
+        LOGGER.log("TEST CASE: failVerifyAccounts", LogLevel.DEBUG);
+
+        actions.executeSqlFromClasspath(FILE);
+        assertFalse(accountDAO.verifyAccount("moderator_01@sample.org"));
     }
 
     @Test

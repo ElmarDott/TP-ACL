@@ -59,6 +59,9 @@ public class LoginDO implements Serializable {
     @Column(name = "OPERATION_SYSTEM")
     private String operationSystem;
 
+    @Column(name = "LOGOUT")
+    private boolean logout;
+
     /**
      * Default Constructor.
      */
@@ -66,6 +69,7 @@ public class LoginDO implements Serializable {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.uuid = StringUtils.generateUUID();
         this.loginDate = new Timestamp(System.currentTimeMillis());
+        this.logout = false;
     }
 
     /**
@@ -78,6 +82,7 @@ public class LoginDO implements Serializable {
         this.uuid = StringUtils.generateUUID();
         this.account = account;
         this.loginDate = new Timestamp(System.currentTimeMillis());
+        this.logout = false;
     }
 
     @Override
@@ -112,6 +117,7 @@ public class LoginDO implements Serializable {
                 + ", ipAddress=" + ipAddress
                 + ", browserID=" + browserID
                 + ", operationSystem=" + operationSystem
+                + ", logout=" + logout
                 + "}";
     }
 
@@ -225,5 +231,14 @@ public class LoginDO implements Serializable {
     public void setOperationSystem(final String operationSystem) {
         this.operationSystem = operationSystem;
     }
+
+    public boolean isLogout() {
+        return logout;
+    }
+
+    public void setLogout(boolean logout) {
+        this.logout = logout;
+    }
     //</editor-fold>
+
 }

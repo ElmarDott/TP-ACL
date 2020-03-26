@@ -72,9 +72,7 @@ public class AccountDO implements Serializable {
      */
     public AccountDO() {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
-        this.role = new RolesDO("Guest");
         this.registrationDate = new Timestamp(System.currentTimeMillis());
-        this.verificationCode = StringUtils.generateUUID();
         this.activated = false;
         this.verified = false;
         this.defaultLocale = "EN_en";
@@ -89,7 +87,6 @@ public class AccountDO implements Serializable {
     public AccountDO(final String email) {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.email = email;
-        this.role = new RolesDO("Guest");
         this.registrationDate = new Timestamp(System.currentTimeMillis());
         this.verificationCode = StringUtils.generateUUID();
         this.activated = false;

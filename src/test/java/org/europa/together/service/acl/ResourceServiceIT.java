@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 public class ResourceServiceIT {
 
-    private static final Logger LOGGER = new LogbackLogger(RoleServiceIT.class);
+    private static final Logger LOGGER = new LogbackLogger(ResourceServiceIT.class);
     private static DatabaseActions actions = new JdbcActions(true);
     private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
     private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";

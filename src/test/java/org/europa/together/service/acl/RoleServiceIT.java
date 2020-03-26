@@ -13,6 +13,7 @@ import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.RolesDO;
+import org.europa.together.utils.acl.Constraints;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,8 +23,6 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -39,6 +38,8 @@ public class RoleServiceIT {
 
     private static HttpServer server;
     private static WebTarget target;
+    private final String API_PATH
+            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
@@ -95,7 +96,7 @@ public class RoleServiceIT {
 
         String json = "{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"After a simple validation process of an existing EMail address.\",\"name\":\"User\"}";
         Response response = target
-                .path("/acl").path("/role").path("/User")
+                .path(API_PATH).path("/role").path("/User")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -109,7 +110,7 @@ public class RoleServiceIT {
         LOGGER.log("TEST CASE: getRole() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path("/acl").path("/role").path("/NotExist")
+                .path(API_PATH).path("/role").path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -123,7 +124,7 @@ public class RoleServiceIT {
         LOGGER.log("TEST CASE: getRole() 401 : UNATHORIZED", LogLevel.DEBUG);
 
         Response response = target
-                .path("/acl").path("/role").path("/Guest")
+                .path(API_PATH).path("/role").path("/Guest")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -141,7 +142,7 @@ public class RoleServiceIT {
                 + "{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Full privilege.\",\"name\":\"Administrator\"}\n"
                 + "]}";
         Response response = target
-                .path("/acl").path("/role").path("/protected")
+                .path(API_PATH).path("/role").path("/protected")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -162,7 +163,7 @@ public class RoleServiceIT {
                 + "{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Full privilege.\",\"name\":\"Administrator\"}\n"
                 + "]}";
         Response response = target
-                .path("/acl").path("/role")
+                .path(API_PATH).path("/role")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -176,7 +177,7 @@ public class RoleServiceIT {
         LOGGER.log("TEST CASE: deleteRoles() 410 : DELETE", LogLevel.DEBUG);
 
         Response response = target
-                .path("/acl").path("/role").path("/Temp")
+                .path(API_PATH).path("/role").path("/Temp")
                 .request()
                 .delete(Response.class);
 
@@ -188,7 +189,7 @@ public class RoleServiceIT {
         LOGGER.log("TEST CASE: deleteRoles() 409 : CONFLICT", LogLevel.DEBUG);
 
         Response response = target
-                .path("/acl").path("/role").path("/Sample")
+                .path(API_PATH).path("/role").path("/Sample")
                 .request()
                 .delete(Response.class);
 
@@ -200,7 +201,7 @@ public class RoleServiceIT {
         LOGGER.log("TEST CASE: deleteRoles() 403 : FORBIDDEN", LogLevel.DEBUG);
 
         Response response = target
-                .path("/acl").path("/role").path("/Guest")
+                .path(API_PATH).path("/role").path("/Guest")
                 .request()
                 .delete(Response.class);
 
@@ -212,7 +213,7 @@ public class RoleServiceIT {
         LOGGER.log("TEST CASE: deleteRoles() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path("/acl").path("/role").path("/NotExist")
+                .path(API_PATH).path("/role").path("/NotExist")
                 .request()
                 .delete(Response.class);
 
@@ -230,14 +231,14 @@ public class RoleServiceIT {
         role.setDescription("Lorem ispsum.");
 
         response = target
-                .path("/acl").path("/role")
+                .path(API_PATH).path("/role")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(role));
 
         assertEquals(201, response.getStatus());
 
         response = target
-                .path("/acl").path("/role").path("/Rest")
+                .path(API_PATH).path("/role").path("/Rest")
                 .request()
                 .delete(Response.class);
 
@@ -252,7 +253,7 @@ public class RoleServiceIT {
         role.setDescription("Update toLorem ispsum.");
 
         Response response = target
-                .path("/acl").path("/role")
+                .path(API_PATH).path("/role")
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(role));
 
@@ -266,7 +267,7 @@ public class RoleServiceIT {
         RolesDO role = new RolesDO("NotExist");
 
         Response response = target
-                .path("/acl").path("/role")
+                .path(API_PATH).path("/role")
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(role));
 

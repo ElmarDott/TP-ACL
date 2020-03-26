@@ -24,7 +24,18 @@ public interface AccountDAO extends GenericDAO<AccountDO, String> {
      * @param email as String
      * @return true on success
      */
+    @API(status = STABLE, since = "1.0")
     boolean deactivateAccount(String email);
+
+    /**
+     * Set an Account to verified. The Account PrimaryKey (ID) is the email
+     * address.
+     *
+     * @param email as String
+     * @return true on success
+     */
+    @API(status = STABLE, since = "1.0")
+    boolean verifyAccount(final String email);
 
     /**
      * Get all activated Accounts.

@@ -24,13 +24,12 @@
         <mainClass>org.europa.together.Main</mainClass>
 
         <skipCoveralls>true</skipCoveralls>
-        <skipJarSigner>false</skipJarSigner>
-        <skipJavaDoc>false</skipJavaDoc>
         <skipUnitTests>false</skipUnitTests>
         <skipIntegrationTests>false</skipIntegrationTests>
+        <skipClover>false</skipClover>
+        <skipJarSigner>false</skipJarSigner>
+        <skipJavaDoc>false</skipJavaDoc>
         <skipEnforcer>false</skipEnforcer>
-        <skipSwagger>false</skipSwagger>
-        <skipPayara>true</skipPayara>
     </properties>
 
     <scm>

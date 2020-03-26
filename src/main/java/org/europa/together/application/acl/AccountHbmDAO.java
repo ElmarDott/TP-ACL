@@ -47,6 +47,19 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
     }
 
     @Override
+    public boolean verifyAccount(final String email) {
+        boolean success = false;
+        AccountDO account = find(email);
+        if (account.isVerified()) {
+            account.setVerified(true);
+            success = true;
+        } else {
+            LOGGER.log("Account " + email + " already is verified.", LogLevel.WARN);
+        }
+        return success;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<AccountDO> listActivatedAccounts() {
         CriteriaBuilder builder = mainEntityManagerFactory.getCriteriaBuilder();
