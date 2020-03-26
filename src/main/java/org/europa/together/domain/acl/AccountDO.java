@@ -1,7 +1,7 @@
 package org.europa.together.domain.acl;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 import javax.persistence.Column;
@@ -50,7 +50,7 @@ public class AccountDO implements Serializable {
 
     @CreationTimestamp
     @Column(name = "REGISTRATION_DATE", nullable = false)
-    private Timestamp registrationDate;
+    private Date registrationDate;
 
     @Column(name = "VERIFIED", nullable = false)
     private boolean verified;
@@ -72,7 +72,7 @@ public class AccountDO implements Serializable {
      */
     public AccountDO() {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
-        this.registrationDate = new Timestamp(System.currentTimeMillis());
+        this.registrationDate = new Date(System.currentTimeMillis());
         this.activated = false;
         this.verified = false;
         this.defaultLocale = "EN_en";
@@ -87,7 +87,7 @@ public class AccountDO implements Serializable {
     public AccountDO(final String email) {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.email = email;
-        this.registrationDate = new Timestamp(System.currentTimeMillis());
+        this.registrationDate = new Date(System.currentTimeMillis());
         this.verificationCode = StringUtils.generateUUID();
         this.activated = false;
         this.verified = false;
@@ -193,8 +193,8 @@ public class AccountDO implements Serializable {
      *
      * @return registrationDate as Timestamp
      */
-    public Timestamp getRegistrationDate() {
-        Timestamp copy = registrationDate;
+    public Date getRegistrationDate() {
+        Date copy = registrationDate;
         return copy;
     }
 
@@ -203,7 +203,7 @@ public class AccountDO implements Serializable {
      *
      * @param registrationDate as Timestamp
      */
-    public void setRegistrationDate(final Timestamp registrationDate) {
+    public void setRegistrationDate(final Date registrationDate) {
         this.registrationDate = registrationDate;
     }
 

@@ -312,7 +312,6 @@ public class AccountServiceIT {
 
         Response response;
         AccountDO account = new AccountDO("new@sample.org");
-        account.setRegistrationDate(null);
         LOGGER.log(account.toString(), LogLevel.DEBUG);
 
         response = target
@@ -339,7 +338,6 @@ public class AccountServiceIT {
         AccountDO account = new AccountDO("user@sample.org");
         account.setDefaultLocale("DE_de");
         account.setVerificationCode("e0acf91e-e44d-4d41-8134-f9b1eb5d2412");
-        account.setRegistrationDate(null);
         LOGGER.log(account.toString(), LogLevel.DEBUG);
 
         Response response = target
@@ -355,7 +353,6 @@ public class AccountServiceIT {
         LOGGER.log("TEST CASE: updateAccount() 404 : NOT FOUND", LogLevel.DEBUG);
 
         AccountDO account = new AccountDO("not.exist@sample.org");
-        account.setRegistrationDate(null);
 
         Response response = target
                 .path(API_PATH).path("/account")

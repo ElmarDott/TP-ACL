@@ -1,7 +1,7 @@
 package org.europa.together.domain.acl;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 import java.util.TimeZone;
 import javax.persistence.Column;
@@ -48,7 +48,7 @@ public class LoginDO implements Serializable {
 
     @CreationTimestamp
     @Column(name = "LOGIN_DATE")
-    private Timestamp loginDate;
+    private Date loginDate;
 
     @Column(name = "IPADRESS")
     private String ipAddress;
@@ -68,7 +68,7 @@ public class LoginDO implements Serializable {
     public LoginDO() {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.uuid = StringUtils.generateUUID();
-        this.loginDate = new Timestamp(System.currentTimeMillis());
+        this.loginDate = new Date(System.currentTimeMillis());
         this.logout = false;
     }
 
@@ -81,7 +81,7 @@ public class LoginDO implements Serializable {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.uuid = StringUtils.generateUUID();
         this.account = account;
-        this.loginDate = new Timestamp(System.currentTimeMillis());
+        this.loginDate = new Date(System.currentTimeMillis());
         this.logout = false;
     }
 
@@ -163,9 +163,9 @@ public class LoginDO implements Serializable {
      *
      * @return loginDate as Timestamp
      */
-    public Timestamp getLoginDate() {
-        Timestamp copy = loginDate;
-        return copy;
+    public Date getLoginDate() {
+        Date login = loginDate;
+        return login;
     }
 
     /**
@@ -173,7 +173,7 @@ public class LoginDO implements Serializable {
      *
      * @param loginDate as Timestamp
      */
-    public void setLoginDate(final Timestamp loginDate) {
+    public void setLoginDate(final Date loginDate) {
         this.loginDate = loginDate;
     }
 
