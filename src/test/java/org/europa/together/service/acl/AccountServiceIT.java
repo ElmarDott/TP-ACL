@@ -121,7 +121,7 @@ public class AccountServiceIT {
     @Test
     @Disabled
     void testGetAccountStatus403() {
-        LOGGER.log("TEST CASE: getAccount() 401 : UNATHORIZED", LogLevel.DEBUG);
+        LOGGER.log("TEST CASE: getAccount() 403 : UNATHORIZED", LogLevel.DEBUG);
 
         Response response = target
                 .path(API_PATH).path("/account").path("/")

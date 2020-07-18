@@ -30,6 +30,7 @@
         <skipJarSigner>false</skipJarSigner>
         <skipJavaDoc>false</skipJavaDoc>
         <skipEnforcer>false</skipEnforcer>
+        <skipSwagger>true</skipSwagger>
     </properties>
 
     <scm>
@@ -86,13 +87,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
@@ -134,7 +128,7 @@
         <!-- Bundels -->
         <dependency>
             <groupId>io.github.together.libraries</groupId>
-            <artifactId>bundle-jarkarta</artifactId>
+            <artifactId>bundle-jakarta</artifactId>
             <type>pom</type>
         </dependency>
 

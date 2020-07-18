@@ -23,6 +23,7 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -91,11 +92,21 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void failFindResource() throws UnsupportedOperationException {
+    void findResourceByDefaultView() {
+        LOGGER.log("TEST CASE: findResourceByDefaultView", LogLevel.DEBUG);
+
+        actions.executeSqlFromClasspath(FILE);
+        ResourcesDO resource = resourcesDAO.find("Article");
+
+        assertEquals("default", resource.getView());
+    }
+
+    @Test
+    void failFindResource() throws EmptyResultDataAccessException {
         LOGGER.log("TEST CASE: failFindResource", LogLevel.DEBUG);
 
-        assertThrows(UnsupportedOperationException.class, () -> {
-            resourcesDAO.find(null);
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            resourcesDAO.find("none");
         });
     }
 
@@ -147,7 +158,7 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void failUpdateResource() throws UnsupportedOperationException {
+    void failDepecatedUpdateResource() throws UnsupportedOperationException {
         LOGGER.log("TEST CASE: failFindResource", LogLevel.DEBUG);
 
         resourcesDAO.update(null);

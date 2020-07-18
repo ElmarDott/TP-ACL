@@ -1,6 +1,7 @@
 package org.europa.together.application.acl;
 
 import java.util.List;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -10,6 +11,7 @@ import org.europa.together.business.Logger;
 import org.europa.together.business.acl.ResourcesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.ResourcesDO;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,23 +34,27 @@ public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String> implemen
     }
 
     @Override
-    public ResourcesDO find(final String resource) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
+    @Deprecated
     public boolean update(final String id, final ResourcesDO object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
+    @Deprecated
     public boolean delete(final String resourceID) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ResourcesDO find(final String resource, final String view) {
+    public ResourcesDO find(final String resource) {
+        return find(resource, "default");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResourcesDO find(final String resource, final String view)
+            throws NoResultException {
         CriteriaBuilder builder = mainEntityManagerFactory.getCriteriaBuilder();
         CriteriaQuery<ResourcesDO> query = builder.createQuery(ResourcesDO.class);
         // create Criteria
@@ -61,9 +67,12 @@ public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String> implemen
     @Override
     public boolean update(final ResourcesDO resource) {
         boolean success = false;
-        if (resource != null) {
+        try {
+            ResourcesDO existing = find(resource.getName(), resource.getView());
             mainEntityManagerFactory.merge(resource);
             success = true;
+        } catch (Exception ex) {
+            LOGGER.catchException(ex);
         }
         return success;
     }
@@ -71,13 +80,13 @@ public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String> implemen
     @Override
     public boolean delete(final ResourcesDO resource) {
         boolean success = false;
-        ResourcesDO object = find(resource.getName(), resource.getView());
+        ResourcesDO object = this.find(resource.getName(), resource.getView());
         if (object.isDeleteable()) {
             mainEntityManagerFactory.remove(object);
             success = true;
         } else {
-            LOGGER.log("Resource(" + object.getName() + "['" + object.getView()
-                    + "']) can't deleted, because it is protected.", LogLevel.DEBUG);
+            throw new DataIntegrityViolationException("Resource(" + object.getName()
+                    + "['" + object.getView() + "']) can't deleted, because it is protected.");
         }
         return success;
     }

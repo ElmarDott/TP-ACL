@@ -159,8 +159,8 @@ public class ResourcesDO implements Serializable {
     }
 
     /**
-     * Flag to protect that a role can not deleted by accident. The ACL contains
-     * by default four protected roles: Guest, User, Moderator & Administrator.
+     * Flag to protect that a resource can not deleted by accident. The ACL
+     * contains by default some protected resources like Document and Article.
      *
      * @return true on success
      */

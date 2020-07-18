@@ -39,8 +39,8 @@ public interface ResourcesDAO extends GenericDAO<ResourcesDO, String> {
     boolean update(final ResourcesDO resource);
 
     /**
-     * If the resource object exist in the persistence context, it will be
-     * deleted.
+     * If the resource object exist in the persistence context and is not
+     * protected, it will be deleted.
      *
      * @param resource as ResourceDO
      * @return true on success

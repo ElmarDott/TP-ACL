@@ -133,7 +133,7 @@ public class RolesDO implements Serializable {
 
     /**
      * Flag to protect that a role can not deleted by accident. The ACL contains
-     * by default four protected roles: Guest, User, Moderator & Administrator.
+     * by default tree protected roles: Guest, User & Administrator.
      *
      * @return true on success
      */

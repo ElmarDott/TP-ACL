@@ -179,6 +179,7 @@ public class RoleService {
             if (exception.equals("EntityNotFoundException")) {
                 status = Response.Status.NOT_FOUND;
             }
+
             LOGGER.log("ERROR CODE " + status.getStatusCode() + " - " + exception, LogLevel.DEBUG);
             response = Response.status(status).build();
         }
