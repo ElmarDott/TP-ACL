@@ -228,12 +228,17 @@ public class ResourceService {
 
     // #########################################################################
     private String objectListToJson(final List<ResourcesDO> resources) {
+        int cnt = 0;
         StringBuilder json = new StringBuilder();
-        json.append("{\"list\": [\n");
+        json.append("[");
         for (ResourcesDO resource : resources) {
-            json.append(resourcesDAO.serializeAsJson(resource) + "\n");
+            if (cnt != 0) {
+                json.append(", \n");
+            }
+            json.append(resourcesDAO.serializeAsJson(resource));
+            cnt++;
         }
-        json.append("]}");
+        json.append("]");
         return json.toString();
     }
 }

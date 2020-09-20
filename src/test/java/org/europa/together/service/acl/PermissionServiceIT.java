@@ -16,13 +16,16 @@ import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
+import org.europa.together.domain.acl.PermissionDO;
+import org.europa.together.domain.acl.PermissionId;
+import org.europa.together.domain.acl.ResourcesDO;
 import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +36,9 @@ import org.junit.runner.RunWith;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
-public class RoleServiceIT {
+public class PermissionServiceIT {
 
-    private static final Logger LOGGER = new LogbackLogger(RoleServiceIT.class);
+    private static final Logger LOGGER = new LogbackLogger(ResourceServiceIT.class);
     private static DatabaseActions actions = new JdbcActions(true);
     private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
     private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
@@ -95,28 +98,27 @@ public class RoleServiceIT {
     //</editor-fold>
 
     @Test
-    void testGetRoleStatus200() throws JsonProcessingException {
-        LOGGER.log("TEST CASE: getRole() 200 : OK", LogLevel.DEBUG);
+    void testGetPermissionStatus200() throws JsonProcessingException {
+        LOGGER.log("TEST CASE: getPermission() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/role").path("/User")
+                .path(API_PATH).path("/permission").path("/1f4c2b42-4408-4f99-b1aa-25002b85ea87")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-        RolesDO object = mapper.readValue(response.readEntity(String.class), RolesDO.class);
+        PermissionDO permission = response.readEntity(PermissionDO.class);
 
         assertEquals(200, response.getStatus());
-        assertEquals("User", object.getName());
+        assertEquals("1f4c2b42-4408-4f99-b1aa-25002b85ea87", permission.getUuid());
     }
 
     @Test
-    void testGetRoleStatus404() {
-        LOGGER.log("TEST CASE: getRole() 404 : NOT FOUND", LogLevel.DEBUG);
+    void testGetPermissionStatus404() {
+        LOGGER.log("TEST CASE: getPermission() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/role").path("/NotExist")
+                .path(API_PATH).path("/permission").path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -126,8 +128,8 @@ public class RoleServiceIT {
 
     @Test
     @Disabled
-    void testGetRoleStatus403() {
-        LOGGER.log("TEST CASE: getRole() 401 : UNATHORIZED", LogLevel.DEBUG);
+    void testGetPermissionStatus403() {
+        LOGGER.log("TEST CASE: getPermission() 401 : UNATHORIZED", LogLevel.DEBUG);
 
         Response response = target
                 .path(API_PATH).path("/role").path("/Guest")
@@ -139,139 +141,86 @@ public class RoleServiceIT {
     }
 
     @Test
-    void testGetProtectedRoles() throws JsonProcessingException {
-        LOGGER.log("TEST CASE: getProtectedRoles() 200 : OK", LogLevel.DEBUG);
+    void testGetAllPermissions() {
+        LOGGER.log("TEST CASE: getAllPermissions() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/role").path("/protected")
+                .path(API_PATH).path("/permission").path("/all")
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class);
+
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    void testGetAllPermissionOfARoleStatus200() throws JsonProcessingException {
+        LOGGER.log("TEST CASE: getAllPermissionOfARole() 200 : OK", LogLevel.DEBUG);
+
+        Response response = target
+                .path(API_PATH).path("/permission").path("/forRole").path("/User")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
         ObjectMapper mapper = new ObjectMapper();
-        List<RolesDO> list = mapper.readValue(response.readEntity(String.class), new TypeReference<List<RolesDO>>() {
-        });
+        PermissionDO[] list = mapper.readValue(response.readEntity(String.class), PermissionDO[].class);
 
         assertEquals(200, response.getStatus());
-        assertEquals(3, list.size());
+        assertEquals(2, list.length);
     }
 
     @Test
-    void testGetAllRoles() throws JsonProcessingException {
-        LOGGER.log("TEST CASE: getAllRoles() 200 : OK", LogLevel.DEBUG);
+    void testGetAllPermissionOfARoleStatus404() {
+        LOGGER.log("TEST CASE: getAllPermissionOfARole() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/role")
+                .path(API_PATH).path("/permission").path("/forRole").path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        List<RolesDO> list = mapper.readValue(response.readEntity(String.class), new TypeReference<List<RolesDO>>() {
-        });
-
-        assertEquals(200, response.getStatus());
-        assertEquals(6, list.size());
-    }
-
-    @Test
-    void testDeleteRoleStatus410() {
-        LOGGER.log("TEST CASE: deleteRoles() 410 : DELETE", LogLevel.DEBUG);
-
-        Response response = target
-                .path(API_PATH).path("/role").path("/Temp")
-                .request()
-                .delete(Response.class);
-
-        assertEquals(410, response.getStatus());
-    }
-
-    @Test
-    void testDeleteRoleStatus409() {
-        LOGGER.log("TEST CASE: deleteRoles() 409 : CONFLICT", LogLevel.DEBUG);
-
-        Response response = target
-                .path(API_PATH).path("/role").path("/Sample")
-                .request()
-                .delete(Response.class);
-
-        assertEquals(409, response.getStatus());
-    }
-
-    @Test
-    void testDeleteRoleStatus403() {
-        LOGGER.log("TEST CASE: deleteRoles() 403 : FORBIDDEN", LogLevel.DEBUG);
-
-        Response response = target
-                .path(API_PATH).path("/role").path("/Guest")
-                .request()
-                .delete(Response.class);
-
-        assertEquals(403, response.getStatus());
-    }
-
-    @Test
-    void testDeleteRoleStatus404() {
-        LOGGER.log("TEST CASE: deleteRoles() 404 : NOT FOUND", LogLevel.DEBUG);
-
-        Response response = target
-                .path(API_PATH).path("/role").path("/NotExist")
-                .request()
-                .delete(Response.class);
 
         assertEquals(404, response.getStatus());
     }
 
     @Test
-    void testCreateRoleStatus201() {
-        LOGGER.log("TEST CASE: createRole() 201 : CREATED", LogLevel.DEBUG);
+    void testUpdatePermissionStatus202() {
+        LOGGER.log("TEST CASE: updatePermission() 202 : ACCEPTED", LogLevel.DEBUG);
 
-        Response response;
-
-        RolesDO role = new RolesDO("Rest");
-        role.setDeleteable(true);
-        role.setDescription("Lorem ispsum.");
-
-        response = target
-                .path(API_PATH).path("/role")
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(role));
-
-        assertEquals(201, response.getStatus());
-
-        response = target
-                .path(API_PATH).path("/role").path("/Rest")
+        Response find = target
+                .path(API_PATH).path("/permission").path("/9b5e3e50-4fdb-46de-bbed-8e011d35cfe8")
                 .request()
-                .delete(Response.class);
+                .accept(MediaType.APPLICATION_JSON)
+                .get(Response.class);
 
-        assertEquals(410, response.getStatus());
+        PermissionDO permission = find.readEntity(PermissionDO.class);
+
+        assertEquals("Sample", permission.getPermissionId().getRole().getName());
+
+        permission.setChange(false);
+        permission.setCreate(false);
+        permission.setDelete(false);
+        permission.setRead(false);
+
+        Response update = target
+                .path(API_PATH).path("/permission")
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.json(permission));
+
+        assertEquals(202, update.getStatus());
     }
 
     @Test
-    void testUpdateRoleStatus202() {
-        LOGGER.log("TEST CASE: updateRole() 202 : ACCEPTED", LogLevel.DEBUG);
+    void testUpdatePermissionStatus404() {
+        LOGGER.log("TEST CASE: updatePermission() 404 : NOT FOUND", LogLevel.DEBUG);
 
-        RolesDO role = new RolesDO("Moderator");
-        role.setDescription("Update toLorem ispsum.");
-
-        Response response = target
-                .path(API_PATH).path("/role")
-                .request(MediaType.APPLICATION_JSON)
-                .put(Entity.json(role));
-
-        assertEquals(202, response.getStatus());
-    }
-
-    @Test
-    void testUpdateRoleStatus404() {
-        LOGGER.log("TEST CASE: updateRole() 404 : NOT FOUND", LogLevel.DEBUG);
-
-        RolesDO role = new RolesDO("NotExist");
+        PermissionDO permission = new PermissionDO();
+        permission.setPermissionId(new PermissionId(new ResourcesDO("NotExist"), new RolesDO("any")));
 
         Response response = target
-                .path(API_PATH).path("/role")
+                .path(API_PATH).path("/permission")
                 .request(MediaType.APPLICATION_JSON)
-                .put(Entity.json(role));
+                .put(Entity.json(permission));
 
         assertEquals(404, response.getStatus());
     }

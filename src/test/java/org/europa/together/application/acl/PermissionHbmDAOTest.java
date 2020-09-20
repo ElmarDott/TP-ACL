@@ -200,7 +200,7 @@ public class PermissionHbmDAOTest {
 
     @Test
     void testUpdatePermission() {
-        LOGGER.log("TEST CASE: deletePermission", LogLevel.DEBUG);
+        LOGGER.log("TEST CASE: updatePermission", LogLevel.DEBUG);
 
         actions.executeSqlFromClasspath(FILE);
         PermissionDO permission = permissionDAO.find("5d1da892-6316-4781-94ea-d82d8a15e350");

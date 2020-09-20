@@ -86,6 +86,7 @@
                     </archive>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -93,7 +94,6 @@
                     <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -131,7 +131,6 @@
             <artifactId>bundle-jakarta</artifactId>
             <type>pom</type>
         </dependency>
-
         <dependency>
             <groupId>io.github.together.libraries</groupId>
             <artifactId>bundle-logging</artifactId>

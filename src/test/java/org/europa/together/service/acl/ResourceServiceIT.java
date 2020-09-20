@@ -1,5 +1,7 @@
 package org.europa.together.service.acl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -91,33 +93,37 @@ public class ResourceServiceIT {
     //</editor-fold>
 
     @Test
-    void testGetResourceByDefaultStatus200() {
+    void testGetResourceByDefaultStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getResourceByDefault() 200 : OK", LogLevel.DEBUG);
 
-        String json = "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":false,\"name\":\"Article\",\"view\":\"default\"}";
         Response response = target
                 .path(API_PATH).path("/resource").path("/Article")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        ResourcesDO object = mapper.readValue(response.readEntity(String.class), ResourcesDO.class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals("Articledefault", object.getName() + object.getView());
     }
 
     @Test
-    void testGetResourceStatus200() {
+    void testGetResourceStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getResource() 200 : OK", LogLevel.DEBUG);
 
-        String json = "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":true,\"name\":\"Article\",\"view\":\"teaser\"}";
         Response response = target
                 .path(API_PATH).path("/resource").path("/Article").queryParam("resourceView", "teaser")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        ResourcesDO object = mapper.readValue(response.readEntity(String.class), ResourcesDO.class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals("Articleteaser", object.getName() + object.getView());
     }
 
     @Test
@@ -161,21 +167,20 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetProtectedResources() {
+    void testGetProtectedResources() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getProtectedResources() 200 : OK", LogLevel.DEBUG);
 
-        String json = "{\"list\": [\n"
-                + "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":false,\"name\":\"Document\",\"view\":\"default\"}\n"
-                + "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":false,\"name\":\"Article\",\"view\":\"default\"}\n"
-                + "]}";
         Response response = target
                 .path(API_PATH).path("/resource").path("/protected")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        ResourcesDO[] list = mapper.readValue(response.readEntity(String.class), ResourcesDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(2, list.length);
     }
 
     @Test
@@ -191,22 +196,20 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetAllResourcesOfSameType() {
+    void testGetAllResourcesOfSameType() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAllResourcesOfSameType() 200 : OK", LogLevel.DEBUG);
 
-        String json = "{\"list\": [\n"
-                + "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":false,\"name\":\"Article\",\"view\":\"default\"}\n"
-                + "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":true,\"name\":\"Article\",\"view\":\"delete\"}\n"
-                + "{\"actions\":\"ALL\",\"class\":\"org.europa.together.domain.acl.ResourcesDO\",\"deleteable\":true,\"name\":\"Article\",\"view\":\"teaser\"}\n"
-                + "]}";
         Response response = target
                 .path(API_PATH).path("/resource").path("/type").path("/Article")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        ResourcesDO[] list = mapper.readValue(response.readEntity(String.class), ResourcesDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(3, list.length);
     }
 
     @Test
@@ -308,7 +311,6 @@ public class ResourceServiceIT {
     }
 
     @Test
-//    @Disabled
     void testCreateResourcesStatus201() {
         LOGGER.log("TEST CASE: createResources() 201 : CREATED", LogLevel.DEBUG);
 

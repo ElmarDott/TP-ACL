@@ -188,12 +188,17 @@ public class RoleService {
 
     // #########################################################################
     private String objectListToJson(final List<RolesDO> roles) {
+        int cnt = 0;
         StringBuilder json = new StringBuilder();
-        json.append("{\"list\": [\n");
+        json.append("[");
         for (RolesDO role : roles) {
-            json.append(rolesDAO.serializeAsJson(role) + "\n");
+            if (cnt != 0) {
+                json.append(", \n");
+            }
+            json.append(rolesDAO.serializeAsJson(role));
+            cnt++;
         }
-        json.append("]}");
+        json.append("]");
         return json.toString();
     }
 }

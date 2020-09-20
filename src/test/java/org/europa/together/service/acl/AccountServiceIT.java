@@ -1,5 +1,9 @@
 package org.europa.together.service.acl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -13,6 +17,7 @@ import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
+import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.utils.acl.Constraints;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
@@ -91,18 +96,20 @@ public class AccountServiceIT {
     //</editor-fold>
 
     @Test
-    void testGetAccountStatus200() {
+    void testGetAccountStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAccount() 200 : OK", LogLevel.DEBUG);
 
-        String json = "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"admin@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Full privilege.\",\"name\":\"Administrator\"},\"verificationCode\":\"2b421f4c-4408-4f99-b1aa-25002b85ea87\",\"verified\":true}";
         Response response = target
                 .path(API_PATH).path("/account").path("/admin@sample.org")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        AccountDO object = mapper.readValue(response.readEntity(String.class), AccountDO.class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals("admin@sample.org", object.getEmail());
     }
 
     @Test
@@ -133,15 +140,8 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetAllAccount() {
+    void testGetAllAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAllAccount() 200 : OK", LogLevel.DEBUG);
-        String json = "{\"list\": [\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"guest@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Default Role for all new Users.\",\"name\":\"Guest\"},\"verificationCode\":\"03a057d0-6ee7-43b1-ac68-d9a7681165a4\",\"verified\":true}\n"
-                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"3644b892-1438-45e4-87c5-0ea140fea92b\",\"verified\":true}\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator_01@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"46b25a22-69b6-43eb-a711-1dcf1ed0eb5e\",\"verified\":false}\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"admin@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Full privilege.\",\"name\":\"Administrator\"},\"verificationCode\":\"2b421f4c-4408-4f99-b1aa-25002b85ea87\",\"verified\":true}\n"
-                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":\"DE_de\",\"defaultTimezone\":\"UTC+00:00\",\"email\":\"user@sample.org\",\"password\":null,\"registrationDate\":1584856360708,\"role\":null,\"verificationCode\":\"e0acf91e-e44d-4d41-8134-f9b1eb5d2412\",\"verified\":false}\n"
-                + "]}";
 
         Response response = target
                 .path(API_PATH).path("/account/list")
@@ -149,36 +149,33 @@ public class AccountServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(7, response.readEntity(String.class).split("\n").length);
+        assertEquals(5, list.length);
     }
 
     @Test
-    void testGetLoginsOfAccount() {
+    void testGetLoginsOfAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getLoginsOfAccount() 200 : OK", LogLevel.DEBUG);
-        String json = "{\"list\": [\n"
-                + "{\"account\":{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"3644b892-1438-45e4-87c5-0ea140fea92b\",\"verified\":true},\"browserID\":\"\",\"class\":\"org.europa.together.domain.acl.LoginDO\",\"ipAddress\":\"127.0.0.1\",\"loginDate\":1277467201000,\"logout\":false,\"operationSystem\":\"\",\"uuid\":\"2b421f4c-4408-4f99-b1aa-25002b85ea87\"}\n"
-                + "{\"account\":{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"3644b892-1438-45e4-87c5-0ea140fea92b\",\"verified\":true},\"browserID\":\"\",\"class\":\"org.europa.together.domain.acl.LoginDO\",\"ipAddress\":\"localhost\",\"loginDate\":1276776001000,\"logout\":false,\"operationSystem\":\"\",\"uuid\":\"a674b42e-6670-4674-a8c7-8e86132eaaa2\"}\n"
-                + "{\"account\":{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"3644b892-1438-45e4-87c5-0ea140fea92b\",\"verified\":true},\"browserID\":\"\",\"class\":\"org.europa.together.domain.acl.LoginDO\",\"ipAddress\":\"127.0.0.1\",\"loginDate\":1276603201000,\"logout\":false,\"operationSystem\":\"\",\"uuid\":\"03a057d0-6ee7-43b1-ac68-d9a7681165a4\"}\n"
-                + "]}";
+
         Response response = target
                 .path(API_PATH).path("/account").path("/list/logins").path("/moderator@sample.org")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        LoginDO[] list = mapper.readValue(response.readEntity(String.class), LoginDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(3, list.length);
     }
 
     @Test
-    void testGetDeactivatedAccount() {
+    void testGetDeactivatedAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getDeactivatedAccount() 200 : OK", LogLevel.DEBUG);
-        String json = "{\"list\": [\n"
-                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"user@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"After a simple validation process of an existing EMail address.\",\"name\":\"User\"},\"verificationCode\":\"a674b42e-6670-4674-a8c7-8e86132eaaa2\",\"verified\":true}\n"
-                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"3644b892-1438-45e4-87c5-0ea140fea92b\",\"verified\":true}\n"
-                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator_02@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"fda79c72-59de-430d-8d5f-8451c7a00c04\",\"verified\":true}\n"
-                + "]}";
 
         Response response = target
                 .path(API_PATH).path("/account").path("/list/deactivated")
@@ -186,18 +183,17 @@ public class AccountServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        List<AccountDO> list = mapper.readValue(response.readEntity(String.class), new TypeReference<List<AccountDO>>() {
+        });
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(3, list.size());
     }
 
     @Test
-    void testGetActivatedAccount() {
+    void testGetActivatedAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getActivatedAccount() 200 : OK", LogLevel.DEBUG);
-        String json = "{\"list\": [\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"guest@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Default Role for all new Users.\",\"name\":\"Guest\"},\"verificationCode\":\"03a057d0-6ee7-43b1-ac68-d9a7681165a4\",\"verified\":true}\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator_01@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"46b25a22-69b6-43eb-a711-1dcf1ed0eb5e\",\"verified\":false}\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"admin@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":false,\"description\":\"Full privilege.\",\"name\":\"Administrator\"},\"verificationCode\":\"2b421f4c-4408-4f99-b1aa-25002b85ea87\",\"verified\":true}\n"
-                + "]}";
 
         Response response = target
                 .path(API_PATH).path("/account").path("/list/activated")
@@ -205,16 +201,16 @@ public class AccountServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(3, list.length);
     }
 
     @Test
-    void testGetNotConfirmedAccount() {
-        LOGGER.log("TEST CASE: getActivatedAccount() 200 : OK", LogLevel.DEBUG);
-        String json = "{\"list\": [\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator_01@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"46b25a22-69b6-43eb-a711-1dcf1ed0eb5e\",\"verified\":false}\n"
-                + "]}";
+    void testGetNotConfirmedAccount() throws JsonProcessingException {
+        LOGGER.log("TEST CASE: getNotConfirmedAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
                 .path(API_PATH).path("/account").path("/list/not-confirmed")
@@ -222,18 +218,16 @@ public class AccountServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(1, list.length);
     }
 
     @Test
-    void testGetAccountsOfRole() {
+    void testGetAccountsOfRole() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAccountsOfRole() 200 : OK", LogLevel.DEBUG);
-        String json = "{\"list\": [\n"
-                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"3644b892-1438-45e4-87c5-0ea140fea92b\",\"verified\":true}\n"
-                + "{\"activated\":true,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator_01@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"46b25a22-69b6-43eb-a711-1dcf1ed0eb5e\",\"verified\":false}\n"
-                //                + "{\"activated\":false,\"class\":\"org.europa.together.domain.acl.AccountDO\",\"defaultLocale\":null,\"defaultTimezone\":null,\"email\":\"moderator_02@sample.org\",\"password\":\"\",\"registrationDate\":449668801000,\"role\":{\"class\":\"org.europa.together.domain.acl.RolesDO\",\"deleteable\":true,\"description\":\"Higher privileged role than a standard user.\",\"name\":\"Moderator\"},\"verificationCode\":\"fda79c72-59de-430d-8d5f-8451c7a00c04\",\"verified\":true}\n"
-                + "]}";
 
         Response response = target
                 .path(API_PATH).path("/account/list").path("/Moderator")
@@ -241,8 +235,11 @@ public class AccountServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
+
         assertEquals(200, response.getStatus());
-        assertEquals(json, response.readEntity(String.class));
+        assertEquals(2, list.length);
     }
 
     @Test

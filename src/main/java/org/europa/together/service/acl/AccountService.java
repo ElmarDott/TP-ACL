@@ -332,22 +332,32 @@ public class AccountService {
 
     // #########################################################################
     private String accountsObjectListToJson(final List<AccountDO> accounts) {
+        int cnt = 0;
         StringBuilder json = new StringBuilder();
-        json.append("{\"list\": [\n");
-        for (AccountDO role : accounts) {
-            json.append(accountDAO.serializeAsJson(role) + "\n");
+        json.append("[");
+        for (AccountDO account : accounts) {
+            if (cnt != 0) {
+                json.append(", \n");
+            }
+            json.append(accountDAO.serializeAsJson(account));
+            cnt++;
         }
-        json.append("]}");
+        json.append("]");
         return json.toString();
     }
 
     private String loginObjectListToJson(final List<LoginDO> logins) {
+        int cnt = 0;
         StringBuilder json = new StringBuilder();
-        json.append("{\"list\": [\n");
+        json.append("[");
         for (LoginDO login : logins) {
-            json.append(loginDAO.serializeAsJson(login) + "\n");
+            if (cnt != 0) {
+                json.append(", \n");
+            }
+            json.append(loginDAO.serializeAsJson(login));
+            cnt++;
         }
-        json.append("]}");
+        json.append("]");
         return json.toString();
     }
 }

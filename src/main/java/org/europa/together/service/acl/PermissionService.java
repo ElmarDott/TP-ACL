@@ -1,0 +1,156 @@
+package org.europa.together.service.acl;
+
+import java.util.List;
+import javax.persistence.NoResultException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.apiguardian.api.API;
+import static org.apiguardian.api.API.Status.STABLE;
+import org.europa.together.application.LogbackLogger;
+import org.europa.together.business.Logger;
+import org.europa.together.business.acl.PermissionDAO;
+import org.europa.together.domain.LogLevel;
+import org.europa.together.domain.acl.PermissionDO;
+import org.europa.together.utils.acl.Constraints;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
+
+/**
+ * RESTful Service for Resources.
+ *
+ * @author elmar.dott@gmail.com
+ * @version 1.0
+ * @since 1.0
+ */
+@Service
+@Path(Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION)
+public class PermissionService {
+
+    private static final Logger LOGGER = new LogbackLogger(PermissionService.class);
+
+    @Autowired
+    @Qualifier("permissionHbmDAO")
+    private PermissionDAO permissionDAO;
+
+    public PermissionService() {
+        LOGGER.log("instance class", LogLevel.INFO);
+    }
+
+    @GET
+    @Path("/permission/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
+    public Response fetchPermission(final @PathParam("id") String permissionId) {
+        Response response = null;
+        try {
+            PermissionDO permission = permissionDAO.find(permissionId);
+            String json = permissionDAO.serializeAsJson(permission);
+            response = Response.status(Response.Status.OK)
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(json)
+                    .encoding("UTF-8")
+                    .build();
+
+        } catch (EmptyResultDataAccessException | NoResultException ex) {
+            LOGGER.log("ERROR CODE 404 " + ex.getMessage(), LogLevel.DEBUG);
+            response = Response.status(Response.Status.NOT_FOUND).build();
+
+        } catch (Exception ex) {
+            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/permission/all")
+    @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
+    public Response fetchAllPermissions() {
+        Response response = null;
+        try {
+            List<PermissionDO> permissions = permissionDAO.listAllElements();
+            String json = objectListToJson(permissions);
+            response = Response.status(Response.Status.OK)
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(json)
+                    .encoding("UTF-8")
+                    .build();
+
+        } catch (Exception ex) {
+            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/permission/forRole/{roleName}")
+    @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
+    public Response fetchAllPermissionsOfARole(final @PathParam("roleName") String roleName) {
+        Response response = null;
+        try {
+            List<PermissionDO> permissions = permissionDAO.listRolePermissions(roleName);
+            if (!permissions.isEmpty()) {
+                String json = objectListToJson(permissions);
+                response = Response.status(Response.Status.OK)
+                        .type(MediaType.APPLICATION_JSON)
+                        .entity(json)
+                        .encoding("UTF-8")
+                        .build();
+            } else {
+                response = Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+        } catch (Exception ex) {
+            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    @PUT
+    @Path("/permission")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
+    public Response updatePermission(final PermissionDO permission) {
+        Response response = null;
+        try {
+            boolean success = permissionDAO.update(permission.getPermissionId(), permission);
+            if (success) {
+                response = Response.status(Response.Status.ACCEPTED).build();
+            } else {
+                response = Response.status(Response.Status.NOT_FOUND).build();
+            }
+        } catch (Exception ex) {
+            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    // #########################################################################
+    private String objectListToJson(final List<PermissionDO> permissions) {
+        int cnt = 0;
+        StringBuilder json = new StringBuilder();
+        json.append("[");
+        for (PermissionDO permission : permissions) {
+            if (cnt != 0) {
+                json.append(", \n");
+            }
+            json.append(permissionDAO.serializeAsJson(permission));
+            cnt++;
+        }
+        json.append("]");
+        return json.toString();
+    }
+}
