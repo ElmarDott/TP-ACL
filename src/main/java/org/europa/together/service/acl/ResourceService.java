@@ -170,7 +170,6 @@ public class ResourceService {
         return response;
     }
 
-    // continiue finish integration tests
     @POST
     @Path("/resource")
     @Consumes({MediaType.APPLICATION_JSON})

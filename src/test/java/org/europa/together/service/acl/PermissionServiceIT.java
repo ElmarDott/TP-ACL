@@ -1,9 +1,7 @@
 package org.europa.together.service.acl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -15,6 +13,8 @@ import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
+import org.europa.together.business.acl.ResourcesDAO;
+import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.PermissionId;
@@ -33,6 +33,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
@@ -47,6 +49,14 @@ public class PermissionServiceIT {
     private static WebTarget target;
     private final String API_PATH
             = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
+
+    @Autowired
+    @Qualifier("rolesHbmDAO")
+    private RolesDAO rolesDAO;
+
+    @Autowired
+    @Qualifier("resourcesHbmDAO")
+    private ResourcesDAO resourcesDAO;
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
@@ -223,5 +233,60 @@ public class PermissionServiceIT {
                 .put(Entity.json(permission));
 
         assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    void testDeletePermissionStatus410() {
+        LOGGER.log("TEST CASE: deletePermission() 410 : DELETE", LogLevel.DEBUG);
+
+        Response response = target
+                .path(API_PATH).path("/permission").path("/eb7bb730-95a0-45ac-983c-258b7a56f1f4")
+                .request()
+                .delete(Response.class);
+
+        assertEquals(410, response.getStatus());
+    }
+
+    @Test
+    void testDeletePermissionStatus404() {
+        LOGGER.log("TEST CASE: deletePermission() 404 : NOT FOUND", LogLevel.DEBUG);
+
+        Response response = target
+                .path(API_PATH).path("/permission").path("/NotExist")
+                .request()
+                .delete(Response.class);
+
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    void testCreatePermissionStatus201() {
+        LOGGER.log("TEST CASE: createPermission() 201 : CREATED", LogLevel.DEBUG);
+
+        PermissionDO entry = new PermissionDO(new PermissionId(
+                resourcesDAO.find("Sample", "default"),
+                rolesDAO.find("Temp")
+        ));
+        entry.setChange(true);
+        entry.setCreate(true);
+        entry.setDelete(true);
+        entry.setRead(true);
+
+        LOGGER.log(entry.toString(), LogLevel.DEBUG);
+
+        Response response;
+        response = target
+                .path(API_PATH).path("/permission")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(entry));
+
+        assertEquals(201, response.getStatus());
+
+//        response = target
+//                .path(API_PATH).path("/permission").path("/" + permission.getPermissionId())
+//                .request()
+//                .delete(Response.class);
+//
+//        assertEquals(410, response.getStatus());
     }
 }

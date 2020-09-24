@@ -3,7 +3,9 @@ package org.europa.together.service.acl;
 import java.util.List;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -134,6 +136,62 @@ public class PermissionService {
         } catch (Exception ex) {
             LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
             response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    @POST
+    @Path("/permission")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
+    public Response createPermission(final PermissionDO permission) {
+        Response response = null;
+        try {
+            permissionDAO.create(permission);
+            response = Response.status(Response.Status.CREATED).build();
+
+        } catch (Exception ex) {
+            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
+            if (ex.equals("NullPointerException")) {
+                LOGGER.catchException(ex);
+            }
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    @DELETE
+    @Path("/permission/{id}")
+    @API(status = STABLE, since = "1")
+    public Response deletePermission(final @PathParam("id") String permissionId) {
+        Response response = null;
+        try {
+            PermissionDO selection = permissionDAO.find(permissionId);
+            boolean success = permissionDAO.delete(selection.getPermissionId());
+
+            if (success) {
+                LOGGER.log("ERROR CODE 410 - deleted", LogLevel.DEBUG);
+                response = Response.status(Response.Status.GONE).build();
+            } else {
+                LOGGER.log("ERROR CODE 403 - forbidden entity protected", LogLevel.DEBUG);
+                response = Response.status(Response.Status.FORBIDDEN).build();
+            }
+
+        } catch (Exception ex) {
+            String exception = ex.getClass().getSimpleName();
+            Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
+            if (exception.equals("EmptyResultDataAccessException")) {
+                status = Response.Status.NOT_FOUND;
+            }
+            if (exception.equals("DataIntegrityViolationException")) {
+                status = Response.Status.CONFLICT;
+            }
+            if (exception.equals("EntityNotFoundException")) {
+                status = Response.Status.NOT_FOUND;
+            }
+
+            LOGGER.log("ERROR CODE " + status.getStatusCode() + " - " + exception, LogLevel.DEBUG);
+            response = Response.status(status).build();
         }
         return response;
     }
