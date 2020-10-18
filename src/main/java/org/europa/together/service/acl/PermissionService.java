@@ -17,8 +17,13 @@ import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.PermissionDAO;
+import org.europa.together.business.acl.ResourcesDAO;
+import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.PermissionDO;
+import org.europa.together.domain.acl.PermissionId;
+import org.europa.together.domain.acl.ResourcesDO;
+import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +46,14 @@ public class PermissionService {
     @Autowired
     @Qualifier("permissionHbmDAO")
     private PermissionDAO permissionDAO;
+
+    @Autowired
+    @Qualifier("rolesHbmDAO")
+    private RolesDAO rolesDAO;
+
+    @Autowired
+    @Qualifier("resourcesHbmDAO")
+    private ResourcesDAO resourcesDAO;
 
     public PermissionService() {
         LOGGER.log("instance class", LogLevel.INFO);
@@ -144,9 +157,24 @@ public class PermissionService {
     @Path("/permission")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
-    public Response createPermission(final PermissionDO permission) {
+    public Response createPermission(final PermissionDO entity) {
         Response response = null;
         try {
+            PermissionId id = entity.getPermissionId();
+            PermissionDO permission = new PermissionDO(new PermissionId(
+                    resourcesDAO.find(id.getResource().getName(), id.getResource().getView()),
+                    rolesDAO.find(id.getRole().getName())
+            ));
+            permission.setUuid(entity.getUuid());
+            permission.setChange(entity.isChange());
+            permission.setCreate(entity.isCreate());
+            permission.setDelete(entity.isDelete());
+            permission.setRead(entity.isRead());
+
+            LOGGER.log("Service: " + permission.getPermissionId().getRole().toString(), LogLevel.DEBUG);
+            LOGGER.log("Service: " + permission.getPermissionId().getResource().toString(), LogLevel.DEBUG);
+            LOGGER.log("Service: " + permission.toString(), LogLevel.DEBUG);
+
             permissionDAO.create(permission);
             response = Response.status(Response.Status.CREATED).build();
 

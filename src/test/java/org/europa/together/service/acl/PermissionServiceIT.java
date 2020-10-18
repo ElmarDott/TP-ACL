@@ -260,33 +260,32 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testCreatePermissionStatus201() {
+    void testCreat8ePermissionStatus201() {
         LOGGER.log("TEST CASE: createPermission() 201 : CREATED", LogLevel.DEBUG);
 
-        PermissionDO entry = new PermissionDO(new PermissionId(
-                resourcesDAO.find("Sample", "default"),
-                rolesDAO.find("Temp")
+        ResourcesDO resource = new ResourcesDO("Sample");
+        resource.setView("update");
+        PermissionDO permission = new PermissionDO(new PermissionId(
+                resource, new RolesDO("Temp")
         ));
-        entry.setChange(true);
-        entry.setCreate(true);
-        entry.setDelete(true);
-        entry.setRead(true);
-
-        LOGGER.log(entry.toString(), LogLevel.DEBUG);
+        permission.setChange(true);
+        permission.setCreate(true);
+        permission.setDelete(true);
+        permission.setRead(true);
 
         Response response;
         response = target
                 .path(API_PATH).path("/permission")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(entry));
+                .post(Entity.json(permission));
 
         assertEquals(201, response.getStatus());
 
-//        response = target
-//                .path(API_PATH).path("/permission").path("/" + permission.getPermissionId())
-//                .request()
-//                .delete(Response.class);
-//
-//        assertEquals(410, response.getStatus());
+        response = target
+                .path(API_PATH).path("/permission").path("/" + permission.getUuid())
+                .request()
+                .delete(Response.class);
+
+        assertEquals(410, response.getStatus());
     }
 }
