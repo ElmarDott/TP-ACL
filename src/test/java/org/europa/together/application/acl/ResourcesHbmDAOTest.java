@@ -1,6 +1,7 @@
 package org.europa.together.application.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import java.sql.SQLException;
 import java.util.List;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
@@ -8,7 +9,6 @@ import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.ResourcesDAO;
 import org.europa.together.domain.LogLevel;
-import org.europa.together.domain.acl.Actions;
 import org.europa.together.domain.acl.ResourcesDO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.AfterAll;
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,31 +30,27 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:/org/europa/together/configuration/spring-dao-test.xml"})
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class ResourcesHbmDAOTest {
 
     private static final Logger LOGGER = new LogbackLogger(ResourcesHbmDAO.class);
-    private static DatabaseActions actions = new JdbcActions(true);
-    private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
-    private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
+    private static final String FLUSH_TABLE
+            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+    private static final String FILE
+            = "org/europa/together/sql/acl/testdata_ACL.sql";
 
     @Autowired
-    @Qualifier("resourcesHbmDAO")
     private ResourcesDAO resourcesDAO;
+
+    private static DatabaseActions jdbcActions = new JdbcActions();
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
+        Assumptions.assumeTrue(jdbcActions.connect("test"));
+
         LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        boolean check = true;
-        String out = "executed";
-        boolean socket = actions.connect("default");
-        if (!socket) {
-            out = "skiped.";
-            check = false;
-        }
-        LOGGER.log("Assumption terminated. TestSuite will be " + out, LogLevel.TRACE);
-        Assumptions.assumeTrue(check);
+        jdbcActions.executeSqlFromClasspath(FILE);
     }
 
     @AfterAll
@@ -68,14 +63,14 @@ public class ResourcesHbmDAOTest {
     }
 
     @AfterEach
-    void testCaseTermination() {
-        actions.executeQuery(FLUSH_TABLES);
+    void testCaseTermination() throws SQLException {
+        jdbcActions.executeQuery(FLUSH_TABLE);
         LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
     @Test
-    void testConstructor() {
+    void constructor() {
         LOGGER.log("TEST CASE: constructor", LogLevel.DEBUG);
         assertThat(ResourcesHbmDAO.class, hasValidBeanConstructor());
     }
@@ -84,7 +79,7 @@ public class ResourcesHbmDAOTest {
     void findResource() {
         LOGGER.log("TEST CASE: findResource", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         ResourcesDO resource = resourcesDAO.find("Article", "teaser");
 
         assertNotNull(resource);
@@ -96,7 +91,7 @@ public class ResourcesHbmDAOTest {
     void findResourceByDefaultView() {
         LOGGER.log("TEST CASE: findResourceByDefaultView", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         ResourcesDO resource = resourcesDAO.find("Article");
 
         assertEquals("default", resource.getView());
@@ -112,7 +107,7 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void testCreateResource() {
+    void createResource() {
         LOGGER.log("TEST CASE: createResource", LogLevel.DEBUG);
 
         ResourcesDO resource = new ResourcesDO("Link");
@@ -120,7 +115,7 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void testCreateResourceWithManyViews() {
+    void createResourceWithManyViews() {
         LOGGER.log("TEST CASE: createResourceWithManyView", LogLevel.DEBUG);
 
         ResourcesDO resource_1 = new ResourcesDO("Link");
@@ -134,7 +129,7 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void testFailCreateDuplicateResource() throws Exception {
+    void failCreateDuplicateResource() throws Exception {
         LOGGER.log("TEST CASE: failCreateDuplicateResource", LogLevel.DEBUG);
 
         ResourcesDO resource_1 = new ResourcesDO("Link");
@@ -150,16 +145,14 @@ public class ResourcesHbmDAOTest {
     void updateResource() {
         LOGGER.log("TEST CASE: updadteResource", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         ResourcesDO resource = resourcesDAO.find("Document", "default");
         assertNotNull(resource);
-        resource.setActions(Actions.REVOKE.toString());
-
         assertTrue(resourcesDAO.update(resource));
     }
 
     @Test
-    void failDepecatedUpdateResource() throws UnsupportedOperationException {
+    void deprecatedUpdateResource() throws UnsupportedOperationException {
         LOGGER.log("TEST CASE: failFindResource", LogLevel.DEBUG);
 
         resourcesDAO.update(null);
@@ -170,10 +163,10 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void testDeleteResource() {
+    void deleteResource() {
         LOGGER.log("TEST CASE: deleteResource", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         ResourcesDO resource = resourcesDAO.find("Article", "delete");
 
         assertTrue(resource.isDeleteable());
@@ -190,10 +183,10 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void failDeletResourceWithExistingPermission() throws Exception {
+    void deletResourceWithExistingPermission() throws Exception {
         LOGGER.log("TEST CASE: failDeleteResourceWithExistingPermission", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         ResourcesDO resource = resourcesDAO.find("Article", "teaser");
         assertTrue(resource.isDeleteable());
 
@@ -203,10 +196,10 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void testProtectedResources() throws Exception {
+    void protectedResources() throws Exception {
         LOGGER.log("TEST CASE: deleteProtectedResources", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         ResourcesDO resource = resourcesDAO.find("Document", "default");
 
         assertFalse(resource.isDeleteable());
@@ -216,19 +209,19 @@ public class ResourcesHbmDAOTest {
     }
 
     @Test
-    void testListProtectedResources() {
+    void listProtectedResources() {
         LOGGER.log("TEST CASE: listProtectedResources", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         List<ResourcesDO> resources = resourcesDAO.listProtectedResources();
         assertEquals(2, resources.size());
     }
 
     @Test
-    void testListResourcesOfSameType() {
+    void listResourcesOfSameType() {
         LOGGER.log("TEST CASE: listResourcesOfSameType", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         List<ResourcesDO> resources = resourcesDAO.listResourcesOfSameType("Article");
         assertEquals(3, resources.size());
     }

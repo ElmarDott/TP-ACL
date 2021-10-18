@@ -2,13 +2,14 @@ package org.europa.together.service.acl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.SQLException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.europa.together.Main;
+import org.europa.together.EmbeddedGrizzly;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
@@ -26,78 +27,72 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class ResourceServiceIT {
 
     private static final Logger LOGGER = new LogbackLogger(ResourceServiceIT.class);
-    private static DatabaseActions actions = new JdbcActions(true);
-    private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
-    private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
 
+    private static final String FLUSH_TABLE
+            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+    private static final String FILE
+            = "org/europa/together/sql/acl/testdata_ACL.sql";
+    private final String API_PATH
+            = "/acl/" + Constraints.REST_API_VERSION + "/resource";
+
+    private static DatabaseActions jdbcActions = new JdbcActions();
     private static HttpServer server;
     private static WebTarget target;
-    private final String API_PATH
-            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        boolean check = true;
-        String out = "executed";
-        boolean socket = actions.connect("default");
-        if (!socket) {
-            out = "skiped.";
-            check = false;
-        }
-        actions.executeSqlFromClasspath(FILE);
+        Assumptions.assumeTrue(jdbcActions.connect("test"));
 
         try {
-            server = Main.startServer();
+            server = EmbeddedGrizzly.startServer();
             ClientConfig config = new ClientConfig();
             Client client = ClientBuilder.newClient(config);
-            target = client.target(Main.BASE_URI);
-
-            if (!server.isStarted()) {
-                out = "skiped.";
-                check = false;
-            }
+            target = client.target(EmbeddedGrizzly.BASE_URI);
         } catch (Exception ex) {
             LOGGER.catchException(ex);
         }
+        Assumptions.assumeTrue(server.isStarted());
 
-        LOGGER.log(target.toString(), LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be " + out, LogLevel.TRACE);
-        Assumptions.assumeTrue(check);
+        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
     }
 
     @AfterAll
     static void tearDown() {
-        server.shutdown();
-        actions.executeQuery(FLUSH_TABLES);
-        LOGGER.log("### TEST SUITE TERMINATED.\n", LogLevel.TRACE);
+        LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
 
     @BeforeEach
     void testCaseInitialization() {
+        jdbcActions.executeSqlFromClasspath(FILE);
     }
 
     @AfterEach
-    void testCaseTermination() {
+    void testCaseTermination() throws SQLException {
+        jdbcActions.executeQuery(FLUSH_TABLE);
         LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
     @Test
-    void testGetResourceByDefaultStatus200() throws JsonProcessingException {
+    void getResourceByDefaultStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getResourceByDefault() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/Article")
+                .path(API_PATH).path("/Article")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -110,11 +105,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetResourceStatus200() throws JsonProcessingException {
+    void getResourceStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getResource() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/Article").queryParam("resourceView", "teaser")
+                .path(API_PATH).path("/Article").queryParam("resourceView", "teaser")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -127,11 +122,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetResourceStatus404() {
+    void getResourceStatus404() {
         LOGGER.log("TEST CASE: getResource() 404 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/NotExist")
+                .path(API_PATH).path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -140,11 +135,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetResourcebyDefaultStatus404() {
+    void getResourcebyDefaultStatus404() {
         LOGGER.log("TEST CASE: getResource() 404 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/NotExist").queryParam("resourceView", "notExist")
+                .path(API_PATH).path("/NotExist").queryParam("resourceView", "notExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -154,11 +149,11 @@ public class ResourceServiceIT {
 
     @Test
     @Disabled
-    void testGetResourceStatus403() {
+    void getResourceStatus403() {
         LOGGER.log("TEST CASE: getResource() 403 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/PermissionDenied")
+                .path(API_PATH).path("/forbidden")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -167,11 +162,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetProtectedResources() throws JsonProcessingException {
+    void getProtectedResources() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getProtectedResources() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/protected")
+                .path(API_PATH).path("/list/protected")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -184,10 +179,10 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetAllResources() {
+    void getAllResources() {
         LOGGER.log("TEST CASE: getAllResources() 200 : OK", LogLevel.DEBUG);
         Response response = target
-                .path(API_PATH).path("/resource").path("/all")
+                .path(API_PATH).path("/list")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -196,11 +191,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetAllResourcesOfSameType() throws JsonProcessingException {
+    void getAllResourcesOfSameType() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAllResourcesOfSameType() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/type").path("/Article")
+                .path(API_PATH).path("/list/equalType").path("/Article")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -213,11 +208,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testGetAllResourcesOfSameType404() {
+    void getAllResourcesOfSameType404() {
         LOGGER.log("TEST CASE: getAllResourcesOfSameType() 404 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/type").path("/NotExist")
+                .path(API_PATH).path("/list/equalType").path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -226,13 +221,12 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testUpdateResourcesStatus202() {
+    void updateResourcesStatus202() {
         LOGGER.log("TEST CASE: updateResources() 202 : ACCEPTED", LogLevel.DEBUG);
 
         ResourcesDO resource = new ResourcesDO();
         resource.setName("Sample");
         resource.setView("update");
-        resource.setActions("OVERWRITTEN");
 
         Response response = target
                 .path(API_PATH).path("/resource")
@@ -243,7 +237,7 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testUpdateResourcesStatus404() {
+    void updateResourcesStatus404() {
         LOGGER.log("TEST CASE: updateResources() 404 : NOT EXIST", LogLevel.DEBUG);
 
         ResourcesDO resource = new ResourcesDO();
@@ -251,7 +245,7 @@ public class ResourceServiceIT {
         resource.setView("default");
 
         Response response = target
-                .path(API_PATH).path("/resource")
+                .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(resource));
 
@@ -259,11 +253,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testDeleteResourceStatus410() {
+    void deleteResourceStatus410() {
         LOGGER.log("TEST CASE: deleteResource() 410 : DELETE", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/Article")
+                .path(API_PATH).path("/Article")
                 .queryParam("resourceView", "teaser")
                 .request(MediaType.APPLICATION_JSON)
                 .delete(Response.class);
@@ -272,11 +266,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testDeleteResourceStatus409() {
+    void deleteResourceStatus409() {
         LOGGER.log("TEST CASE: deleteResource() 409 : CONFLICT", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/Article")
+                .path(API_PATH).path("/Article")
                 .queryParam("resourceView", "teaser")
                 .request(MediaType.APPLICATION_JSON)
                 .delete(Response.class);
@@ -285,11 +279,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testDeleteResourcesStatus403() {
+    void deleteResourcesStatus403() {
         LOGGER.log("TEST CASE: deleteResources() 403 : FORBIDDEN", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/Document")
+                .path(API_PATH).path("/Document")
                 .queryParam("resourceView", "default")
                 .request(MediaType.APPLICATION_JSON)
                 .delete(Response.class);
@@ -298,11 +292,11 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testDeleteResourceStatus404() {
+    void deleteResourceStatus404() {
         LOGGER.log("TEST CASE: deleteResource() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/resource").path("/NotExist")
+                .path(API_PATH).path("/NotExist")
                 .queryParam("resourceView", "default")
                 .request()
                 .delete(Response.class);
@@ -311,7 +305,7 @@ public class ResourceServiceIT {
     }
 
     @Test
-    void testCreateResourcesStatus201() {
+    void createResourcesStatus201() {
         LOGGER.log("TEST CASE: createResources() 201 : CREATED", LogLevel.DEBUG);
 
         Response response;
@@ -322,14 +316,14 @@ public class ResourceServiceIT {
         resource.setDeleteable(true);
 
         response = target
-                .path(API_PATH).path("/resource")
+                .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(resource));
 
         assertEquals(201, response.getStatus());
 
         response = target
-                .path(API_PATH).path("/resource").path("/CREATE")
+                .path(API_PATH).path("/CREATE")
                 .queryParam("resourceView", "default")
                 .request(MediaType.APPLICATION_JSON)
                 .delete(Response.class);

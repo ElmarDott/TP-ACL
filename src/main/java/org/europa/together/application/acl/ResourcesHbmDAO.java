@@ -68,7 +68,7 @@ public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String> implemen
     public boolean update(final ResourcesDO resource) {
         boolean success = false;
         try {
-            ResourcesDO existing = find(resource.getName(), resource.getView());
+            find(resource.getName(), resource.getView());
             mainEntityManagerFactory.merge(resource);
             success = true;
         } catch (Exception ex) {

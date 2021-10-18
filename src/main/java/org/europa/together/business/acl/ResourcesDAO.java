@@ -36,7 +36,7 @@ public interface ResourcesDAO extends GenericDAO<ResourcesDO, String> {
      * @return true on success
      */
     @API(status = STABLE, since = "1.0")
-    boolean update(final ResourcesDO resource);
+    boolean update(ResourcesDO resource);
 
     /**
      * If the resource object exist in the persistence context and is not

@@ -2,19 +2,19 @@ package org.europa.together.service.acl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.SQLException;
+import java.util.logging.Level;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.europa.together.Main;
+import org.europa.together.EmbeddedGrizzly;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
-import org.europa.together.business.acl.ResourcesDAO;
-import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.PermissionId;
@@ -31,88 +31,72 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class PermissionServiceIT {
 
     private static final Logger LOGGER = new LogbackLogger(ResourceServiceIT.class);
-    private static DatabaseActions actions = new JdbcActions(true);
-    private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
-    private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
 
+    private static final String FLUSH_TABLE
+            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+    private static final String FILE
+            = "org/europa/together/sql/acl/testdata_ACL.sql";
+    private final String API_PATH
+            = "/acl/" + Constraints.REST_API_VERSION + "/permission";
+
+    private static DatabaseActions jdbcActions = new JdbcActions();
     private static HttpServer server;
     private static WebTarget target;
-    private final String API_PATH
-            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
-
-    @Autowired
-    @Qualifier("rolesHbmDAO")
-    private RolesDAO rolesDAO;
-
-    @Autowired
-    @Qualifier("resourcesHbmDAO")
-    private ResourcesDAO resourcesDAO;
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        boolean check = true;
-        String out = "executed";
-        boolean socket = actions.connect("default");
-        if (!socket) {
-            out = "skiped.";
-            check = false;
-        }
-        actions.executeSqlFromClasspath(FILE);
+        Assumptions.assumeTrue(jdbcActions.connect("test"));
 
         try {
-            server = Main.startServer();
+            server = EmbeddedGrizzly.startServer();
             ClientConfig config = new ClientConfig();
             Client client = ClientBuilder.newClient(config);
-            target = client.target(Main.BASE_URI);
-
-            if (!server.isStarted()) {
-                out = "skiped.";
-                check = false;
-            }
+            target = client.target(EmbeddedGrizzly.BASE_URI);
         } catch (Exception ex) {
             LOGGER.catchException(ex);
         }
+        Assumptions.assumeTrue(server.isStarted());
 
-        LOGGER.log(target.toString(), LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be " + out, LogLevel.TRACE);
-        Assumptions.assumeTrue(check);
+        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
     }
 
     @AfterAll
     static void tearDown() {
-        server.shutdown();
-        actions.executeQuery(FLUSH_TABLES);
-        LOGGER.log("### TEST SUITE TERMINATED.\n", LogLevel.TRACE);
+        LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
 
     @BeforeEach
     void testCaseInitialization() {
+        jdbcActions.executeSqlFromClasspath(FILE);
     }
 
     @AfterEach
-    void testCaseTermination() {
+    void testCaseTermination() throws SQLException {
+        jdbcActions.executeQuery(FLUSH_TABLE);
         LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
     @Test
-    void testGetPermissionStatus200() throws JsonProcessingException {
+    void getPermissionStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getPermission() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/1f4c2b42-4408-4f99-b1aa-25002b85ea87")
+                .path(API_PATH).path("/1f4c2b42-4408-4f99-b1aa-25002b85ea87")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -124,11 +108,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testGetPermissionStatus404() {
+    void getPermissionStatus404() {
         LOGGER.log("TEST CASE: getPermission() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/NotExist")
+                .path(API_PATH).path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -138,11 +122,11 @@ public class PermissionServiceIT {
 
     @Test
     @Disabled
-    void testGetPermissionStatus403() {
+    void getPermissionStatus403() {
         LOGGER.log("TEST CASE: getPermission() 401 : UNATHORIZED", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/role").path("/Guest")
+                .path(API_PATH).path("/forbidden")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -151,11 +135,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testGetAllPermissions() {
+    void getAllPermissions() {
         LOGGER.log("TEST CASE: getAllPermissions() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/all")
+                .path(API_PATH).path("/list")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -164,11 +148,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testGetAllPermissionOfARoleStatus200() throws JsonProcessingException {
+    void getAllPermissionOfARoleStatus200() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAllPermissionOfARole() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/forRole").path("/User")
+                .path(API_PATH).path("/list/forRole").path("/User")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -181,11 +165,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testGetAllPermissionOfARoleStatus404() {
+    void getAllPermissionOfARoleStatus404() {
         LOGGER.log("TEST CASE: getAllPermissionOfARole() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/forRole").path("/NotExist")
+                .path(API_PATH).path("/list/forRole").path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -194,11 +178,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testUpdatePermissionStatus202() {
+    void updatePermissionStatus202() {
         LOGGER.log("TEST CASE: updatePermission() 202 : ACCEPTED", LogLevel.DEBUG);
 
         Response find = target
-                .path(API_PATH).path("/permission").path("/9b5e3e50-4fdb-46de-bbed-8e011d35cfe8")
+                .path(API_PATH).path("/9b5e3e50-4fdb-46de-bbed-8e011d35cfe8")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -221,14 +205,14 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testUpdatePermissionStatus404() {
+    void updatePermissionStatus404() {
         LOGGER.log("TEST CASE: updatePermission() 404 : NOT FOUND", LogLevel.DEBUG);
 
         PermissionDO permission = new PermissionDO();
         permission.setPermissionId(new PermissionId(new ResourcesDO("NotExist"), new RolesDO("any")));
 
         Response response = target
-                .path(API_PATH).path("/permission")
+                .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(permission));
 
@@ -236,11 +220,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testDeletePermissionStatus410() {
+    void deletePermissionStatus410() {
         LOGGER.log("TEST CASE: deletePermission() 410 : DELETE", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/eb7bb730-95a0-45ac-983c-258b7a56f1f4")
+                .path(API_PATH).path("/eb7bb730-95a0-45ac-983c-258b7a56f1f4")
                 .request()
                 .delete(Response.class);
 
@@ -248,11 +232,11 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testDeletePermissionStatus404() {
+    void deletePermissionStatus404() {
         LOGGER.log("TEST CASE: deletePermission() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/permission").path("/NotExist")
+                .path(API_PATH).path("/NotExist")
                 .request()
                 .delete(Response.class);
 
@@ -260,7 +244,7 @@ public class PermissionServiceIT {
     }
 
     @Test
-    void testCreat8ePermissionStatus201() {
+    void createPermissionStatus201() {
         LOGGER.log("TEST CASE: createPermission() 201 : CREATED", LogLevel.DEBUG);
 
         ResourcesDO resource = new ResourcesDO("Sample");
@@ -282,7 +266,7 @@ public class PermissionServiceIT {
         assertEquals(201, response.getStatus());
 
         response = target
-                .path(API_PATH).path("/permission").path("/" + permission.getUuid())
+                .path(API_PATH).path("/" + permission.getUuid())
                 .request()
                 .delete(Response.class);
 

@@ -20,30 +20,8 @@ public class ResourceIdTest {
 
     private static final Logger LOGGER = new LogbackLogger(ResourceIdTest.class);
 
-    //<editor-fold defaultstate="collapsed" desc="Test Preparation">
-    @BeforeAll
-    static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be executed.\n", LogLevel.TRACE);
-    }
-
-    @AfterAll
-    static void tearDown() {
-        LOGGER.log("### TEST SUITE TERMINATED.", LogLevel.TRACE);
-    }
-
-    @BeforeEach
-    void testCaseInitialization() {
-    }
-
-    @AfterEach
-    void testCaseTermination() {
-        LOGGER.log("TEST CASE TERMINATED.\n", LogLevel.TRACE);
-    }
-    //</editor-fold>
-
     @Test
-    void testDomainObject() {
+    void domainObject() {
         LOGGER.log("TEST CASE: domainObject()", LogLevel.DEBUG);
 
         assertThat(ResourceId.class, hasValidBeanConstructor());

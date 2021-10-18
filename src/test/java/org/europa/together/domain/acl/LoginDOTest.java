@@ -24,36 +24,9 @@ import org.junit.runner.RunWith;
 public class LoginDOTest {
 
     private static final Logger LOGGER = new LogbackLogger(LoginDOTest.class);
-    private static ValidatorFactory validatorFactory;
-    private static Validator validate;
-
-    //<editor-fold defaultstate="collapsed" desc="Test Preparation">
-    @BeforeAll
-    static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be executed.\n", LogLevel.TRACE);
-    }
-
-    @AfterAll
-    static void tearDown() {
-        LOGGER.log("### TEST SUITE TERMINATED.", LogLevel.TRACE);
-    }
-
-    @BeforeEach
-    void testCaseInitialization() {
-        validatorFactory = Validation.buildDefaultValidatorFactory();
-        validate = validatorFactory.getValidator();
-    }
-
-    @AfterEach
-    void testCaseTermination() {
-        validatorFactory.close();
-        LOGGER.log("TEST CASE TERMINATED.\n", LogLevel.TRACE);
-    }
-    //</editor-fold>
 
     @Test
-    void testDomainObject() {
+    void domainObject() {
         LOGGER.log("TEST CASE: domainObject()", LogLevel.DEBUG);
 
         assertThat(LoginDO.class, hasValidBeanConstructor());
@@ -64,14 +37,14 @@ public class LoginDOTest {
     }
 
     @Test
-    void testConstructor() {
+    void constructor() {
         LoginDO domainObject = new LoginDO(new AccountDO("test@sample.org"));
 
         assertEquals("test@sample.org", domainObject.getAccount().getEmail());
     }
 
     @Test
-    void testObjectIsEqual() {
+    void isEqual() {
         LOGGER.log("TEST CASE: objectIsEqual()", LogLevel.DEBUG);
 
         String uuid = StringUtils.generateUUID();
@@ -84,7 +57,7 @@ public class LoginDOTest {
     }
 
     @Test
-    void testDomainObjectIsNotEqual() throws Exception {
+    void isNotEqual() throws Exception {
         LOGGER.log("TEST CASE: objectisNotEqual()", LogLevel.DEBUG);
 
         LoginDO first = new LoginDO();

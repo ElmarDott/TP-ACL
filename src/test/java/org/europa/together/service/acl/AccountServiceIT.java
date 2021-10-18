@@ -3,6 +3,8 @@ package org.europa.together.service.acl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.MalformedURLException;
+import java.sql.SQLException;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -10,7 +12,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.europa.together.Main;
+import org.europa.together.EmbeddedGrizzly;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
@@ -29,78 +31,72 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class AccountServiceIT {
 
     private static final Logger LOGGER = new LogbackLogger(AccountServiceIT.class);
-    private static DatabaseActions actions = new JdbcActions(true);
-    private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
-    private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
 
+    private static final String FLUSH_TABLE
+            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+    private static final String FILE
+            = "org/europa/together/sql/acl/testdata_ACL.sql";
+    private static final String API_PATH
+            = "/acl/" + Constraints.REST_API_VERSION + "/account";
+
+    private static DatabaseActions jdbcActions = new JdbcActions();
     private static HttpServer server;
     private static WebTarget target;
-    private final String API_PATH
-            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        boolean check = true;
-        String out = "executed";
-        boolean socket = actions.connect("default");
-        if (!socket) {
-            out = "skiped.";
-            check = false;
-        }
-        actions.executeSqlFromClasspath(FILE);
+        Assumptions.assumeTrue(jdbcActions.connect("test"));
 
         try {
-            server = Main.startServer();
+            server = EmbeddedGrizzly.startServer();
             ClientConfig config = new ClientConfig();
             Client client = ClientBuilder.newClient(config);
-            target = client.target(Main.BASE_URI);
-
-            if (!server.isStarted()) {
-                out = "skiped.";
-                check = false;
-            }
+            target = client.target(EmbeddedGrizzly.BASE_URI);
         } catch (Exception ex) {
             LOGGER.catchException(ex);
         }
+        Assumptions.assumeTrue(server.isStarted());
 
-        LOGGER.log(target.toString(), LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be " + out, LogLevel.TRACE);
-        Assumptions.assumeTrue(check);
+        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
     }
 
     @AfterAll
     static void tearDown() {
-        server.shutdown();
-        actions.executeQuery(FLUSH_TABLES);
-        LOGGER.log("### TEST SUITE TERMINATED.\n", LogLevel.TRACE);
+        LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
 
     @BeforeEach
     void testCaseInitialization() {
+        jdbcActions.executeSqlFromClasspath(FILE);
     }
 
     @AfterEach
-    void testCaseTermination() {
+    void testCaseTermination() throws SQLException {
+        jdbcActions.executeQuery(FLUSH_TABLE);
         LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
     @Test
-    void testGetAccountStatus200() throws JsonProcessingException {
+    void getAccountStatus200() throws JsonProcessingException, MalformedURLException {
         LOGGER.log("TEST CASE: getAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/admin@sample.org")
+                .path(API_PATH).path("/admin@sample.org")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -113,11 +109,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetAccountStatus404() {
+    void getAccountStatus404() {
         LOGGER.log("TEST CASE: getAccount() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/NotExist")
+                .path(API_PATH).path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -127,11 +123,11 @@ public class AccountServiceIT {
 
     @Test
     @Disabled
-    void testGetAccountStatus403() {
+    void getAccountStatus403() {
         LOGGER.log("TEST CASE: getAccount() 403 : UNATHORIZED", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/")
+                .path(API_PATH).path("/forbidden")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -140,11 +136,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetAllAccount() throws JsonProcessingException {
+    void getAllAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAllAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account/list")
+                .path(API_PATH).path("/list")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -157,11 +153,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetLoginsOfAccount() throws JsonProcessingException {
+    void getLoginsOfAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getLoginsOfAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/list/logins").path("/moderator@sample.org")
+                .path(API_PATH).path("/list/logins").path("/moderator@sample.org")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -174,11 +170,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetDeactivatedAccount() throws JsonProcessingException {
+    void getDeactivatedAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getDeactivatedAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/list/deactivated")
+                .path(API_PATH).path("/list/deactivated")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -192,11 +188,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetActivatedAccount() throws JsonProcessingException {
+    void getActivatedAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getActivatedAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/list/activated")
+                .path(API_PATH).path("/list/activated")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -209,11 +205,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetNotConfirmedAccount() throws JsonProcessingException {
+    void getNotConfirmedAccount() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getNotConfirmedAccount() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/list/not-confirmed")
+                .path(API_PATH).path("/list/not-confirmed")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -226,11 +222,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testGetAccountsOfRole() throws JsonProcessingException {
+    void getAccountsOfRole() throws JsonProcessingException {
         LOGGER.log("TEST CASE: getAccountsOfRole() 200 : OK", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account/list").path("/Moderator")
+                .path(API_PATH).path("/list").path("/Moderator")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
@@ -243,11 +239,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testDeleteAccountStatus410() {
+    void deleteAccountStatus410() {
         LOGGER.log("TEST CASE: deleteAccount() 410 : DELETE", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/moderator_02@sample.org")
+                .path(API_PATH).path("/moderator_02@sample.org")
                 .request()
                 .delete(Response.class);
 
@@ -255,11 +251,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testDeleteAccountStatus409() {
+    void deleteAccountStatus409() {
         LOGGER.log("TEST CASE: deleteAccount() 409 : CONFLICT", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/moderator@sample.org")
+                .path(API_PATH).path("/moderator@sample.org")
                 .request()
                 .delete(Response.class);
 
@@ -267,11 +263,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testDeleteAccountStatus404() {
+    void deleteAccountStatus404() {
         LOGGER.log("TEST CASE: deleteAccount() 404 : NOT FOUND", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account").path("/NotExist")
+                .path(API_PATH).path("/NotExist")
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .delete(Response.class);
@@ -280,11 +276,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testDeactivateAccount() {
+    void deactivateAccount() {
         LOGGER.log("TEST CASE: deactivateAccount() 202 : ACCEPTED", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account/deactivate/").path("/moderator_02@sample.org")
+                .path(API_PATH).path("/deactivate/").path("/moderator_02@sample.org")
                 .request(MediaType.TEXT_PLAIN)
                 .put(Entity.text("moderator_02@sample.org"));
 
@@ -292,11 +288,11 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testVerifyAccount() {
+    void verifyAccount() {
         LOGGER.log("TEST CASE: verifyAccount() 202 : ACCEPTED", LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account/verify/").path("/user@sample.org")
+                .path(API_PATH).path("/verify/").path("/user@sample.org")
                 .request(MediaType.TEXT_PLAIN)
                 .put(Entity.text("moderator_02@sample.org"));
 
@@ -304,7 +300,7 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testCreateAccountStatus201() {
+    void createAccountStatus201() {
         LOGGER.log("TEST CASE: createAccount() 201 : CREATED", LogLevel.DEBUG);
 
         Response response;
@@ -312,7 +308,7 @@ public class AccountServiceIT {
         LOGGER.log(account.toString(), LogLevel.DEBUG);
 
         response = target
-                .path(API_PATH).path("/account")
+                .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(account));
 
@@ -320,7 +316,7 @@ public class AccountServiceIT {
         assertEquals(201, response.getStatus());
 
         response = target
-                .path(API_PATH).path("/account").path("/new@sample.org")
+                .path(API_PATH).path("/new@sample.org")
                 .request()
                 .delete(Response.class);
 
@@ -328,8 +324,7 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testUpdateAccountStatus202() {
-
+    void updateAccountStatus202() {
         LOGGER.log("TEST CASE: updateAccount() 202 : ACCEPTED", LogLevel.DEBUG);
 
         AccountDO account = new AccountDO("user@sample.org");
@@ -338,7 +333,7 @@ public class AccountServiceIT {
         LOGGER.log(account.toString(), LogLevel.DEBUG);
 
         Response response = target
-                .path(API_PATH).path("/account")
+                .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(account));
 
@@ -346,13 +341,13 @@ public class AccountServiceIT {
     }
 
     @Test
-    void testUpdateAccountStatus404() {
+    void updateAccountStatus404() {
         LOGGER.log("TEST CASE: updateAccount() 404 : NOT FOUND", LogLevel.DEBUG);
 
         AccountDO account = new AccountDO("not.exist@sample.org");
 
         Response response = target
-                .path(API_PATH).path("/account")
+                .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(account));
 

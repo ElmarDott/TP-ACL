@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.europa.together.utils.StringUtils;
-import org.europa.together.utils.acl.Constraints;
+import org.europa.together.utils.Constraints;
 import org.hibernate.annotations.CreationTimestamp;
 
 /**
@@ -47,8 +47,11 @@ public class LoginDO implements Serializable {
     private AccountDO account;
 
     @CreationTimestamp
-    @Column(name = "LOGIN_DATE")
-    private Date loginDate;
+    @Column(name = "LOGIN")
+    private Date login;
+
+    @Column(name = "LOGOUT")
+    private Date logout;
 
     @Column(name = "IPADRESS")
     private String ipAddress;
@@ -59,17 +62,13 @@ public class LoginDO implements Serializable {
     @Column(name = "OPERATION_SYSTEM")
     private String operationSystem;
 
-    @Column(name = "LOGOUT")
-    private boolean logout;
-
     /**
      * Default Constructor.
      */
     public LoginDO() {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.uuid = StringUtils.generateUUID();
-        this.loginDate = new Date(System.currentTimeMillis());
-        this.logout = false;
+        this.login = new Date(System.currentTimeMillis());
     }
 
     /**
@@ -81,8 +80,7 @@ public class LoginDO implements Serializable {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.uuid = StringUtils.generateUUID();
         this.account = account;
-        this.loginDate = new Date(System.currentTimeMillis());
-        this.logout = false;
+        this.login = new Date(System.currentTimeMillis());
     }
 
     @Override
@@ -113,11 +111,11 @@ public class LoginDO implements Serializable {
         return "LoginDO{"
                 + "uuid=" + uuid
                 + ", account=" + account
-                + ", loginDate=" + loginDate
+                + ", login=" + login
+                + ", logout=" + logout
                 + ", ipAddress=" + ipAddress
                 + ", browserID=" + browserID
                 + ", operationSystem=" + operationSystem
-                + ", logout=" + logout
                 + "}";
     }
 
@@ -159,22 +157,21 @@ public class LoginDO implements Serializable {
     }
 
     /**
-     * EGet the Date of this specific Login.
+     * Get the Date of this specific Login.
      *
-     * @return loginDate as Timestamp
+     * @return login as Timestamp
      */
-    public Date getLoginDate() {
-        Date login = loginDate;
-        return login;
+    public Date getLogin() {
+        return this.login;
     }
 
     /**
      * Set the Date for the login.
      *
-     * @param loginDate as Timestamp
+     * @param login as Date
      */
-    public void setLoginDate(final Date loginDate) {
-        this.loginDate = loginDate;
+    public void setLogin(final Date login) {
+        this.login = login;
     }
 
     /**
@@ -232,11 +229,21 @@ public class LoginDO implements Serializable {
         this.operationSystem = operationSystem;
     }
 
-    public boolean isLogout() {
+    /**
+     * Get the logout timestamp of a login object.
+     *
+     * @return logout as Date
+     */
+    public Date getLogout() {
         return logout;
     }
 
-    public void setLogout(boolean logout) {
+    /**
+     * Set the logout time for a login object.
+     *
+     * @param logout as Date
+     */
+    public void setLogout(final Date logout) {
         this.logout = logout;
     }
     //</editor-fold>

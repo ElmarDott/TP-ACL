@@ -45,7 +45,7 @@ public class RolesHbmDAO extends GenericHbmDAO<RolesDO, String> implements Roles
             }
         } else {
             LOGGER.log("Role(" + roleName + ") don't exist.",
-                    LogLevel.DEBUG);
+                    LogLevel.WARN);
         }
         return success;
     }

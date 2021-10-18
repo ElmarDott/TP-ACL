@@ -1,6 +1,7 @@
 package org.europa.together.application.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import java.sql.SQLException;
 import java.util.List;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
@@ -9,6 +10,7 @@ import org.europa.together.business.Logger;
 import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.RolesDO;
+import org.europa.together.utils.Constraints;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -21,38 +23,34 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:/org/europa/together/configuration/spring-dao-test.xml"})
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class RolesHbmDAOTest {
 
     private static final Logger LOGGER = new LogbackLogger(RolesHbmDAOTest.class);
-    private static DatabaseActions actions = new JdbcActions(true);
-    private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
-    private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
+
+    private static final String FLUSH_TABLE
+            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+    private static final String FILE
+            = "org/europa/together/sql/acl/testdata_ACL.sql";
 
     @Autowired
-    @Qualifier("rolesHbmDAO")
     private RolesDAO rolesDAO;
+
+    private static DatabaseActions jdbcActions = new JdbcActions();
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
+        Assumptions.assumeTrue(jdbcActions.connect("test"));
+
         LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        boolean check = true;
-        String out = "executed";
-        boolean socket = actions.connect("default");
-        if (!socket) {
-            out = "skiped.";
-            check = false;
-        }
-        LOGGER.log("Assumption terminated. TestSuite will be " + out, LogLevel.TRACE);
-        Assumptions.assumeTrue(check);
+        jdbcActions.executeSqlFromClasspath(FILE);
     }
 
     @AfterAll
@@ -65,23 +63,23 @@ public class RolesHbmDAOTest {
     }
 
     @AfterEach
-    void testCaseTermination() {
-        actions.executeQuery(FLUSH_TABLES);
+    void testCaseTermination() throws SQLException {
+        jdbcActions.executeQuery(FLUSH_TABLE);
         LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
     @Test
-    void testConstructor() {
+    void constructor() {
         LOGGER.log("TEST CASE: constructor", LogLevel.DEBUG);
         assertThat(RolesHbmDAO.class, hasValidBeanConstructor());
     }
 
     @Test
-    void testFindRoleByName() {
+    void findRoleByName() {
         LOGGER.log("TEST CASE: findRoleByName", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         RolesDO role = rolesDAO.find("User");
 
         assertNotNull(role);
@@ -89,7 +87,7 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testCreateRole() {
+    void createRole() {
         LOGGER.log("TEST CASE: createRole", LogLevel.DEBUG);
 
         RolesDO role = new RolesDO("create");
@@ -97,10 +95,10 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testUpdateRole() {
+    void updateRole() {
         LOGGER.log("TEST CASE: updateRole", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         RolesDO role = rolesDAO.find("User");
         role.setDescription("Update role description.");
 
@@ -110,7 +108,7 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testProtectedRoles() {
+    void protectedRoles() {
         LOGGER.log("TEST CASE: protectedRole", LogLevel.DEBUG);
 
         RolesDO role = new RolesDO("protected");
@@ -122,7 +120,7 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testDeleteRoleWhitoutAccount() {
+    void deleteRoleWhitoutAccount() {
         LOGGER.log("TEST CASE: deleteDeleteRoleWhitoutAccount", LogLevel.DEBUG);
         RolesDO role = new RolesDO("delete");
         assertTrue(rolesDAO.create(role));
@@ -130,10 +128,10 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testFailDeleteRoleLinkedToAccount() throws Exception {
+    void failDeleteRoleLinkedToAccount() throws Exception {
         LOGGER.log("TEST CASE: failDeleteRoleLinkedToAccount", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         RolesDO role = rolesDAO.find("Moderator");
         assertNotNull(role);
 
@@ -143,10 +141,10 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testFailDeleteRoleLinkedToPermission() throws Exception {
+    void failDeleteRoleLinkedToPermission() throws Exception {
         LOGGER.log("TEST CASE: failDeleteRoleLinkedToPermission", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         RolesDO role = rolesDAO.find("Sample");
 
         assertNotNull(role);
@@ -156,7 +154,15 @@ public class RolesHbmDAOTest {
     }
 
     @Test
-    void testListProtectedRoles() {
+    void failDeleteRoleNotExist() {
+        LOGGER.log("TEST CASE: failDeleteRoleLinkedToPermission", LogLevel.DEBUG);
+
+        jdbcActions.executeSqlFromClasspath(FILE);
+        assertFalse(rolesDAO.delete("NotExist"));
+    }
+
+    @Test
+    void listProtectedRoles() {
         LOGGER.log("TEST CASE: listProtectedRoles", LogLevel.DEBUG);
 
         RolesDO role_01 = new RolesDO("first");

@@ -19,6 +19,16 @@ import org.springframework.stereotype.Repository;
 public interface AccountDAO extends GenericDAO<AccountDO, String> {
 
     /**
+     * Fetch an account by his verification code, to enanble the activation /
+     * registration procedure.
+     *
+     * @param verificationCode as String
+     * @return account as AccountDO
+     */
+    @API(status = STABLE, since = "1.0")
+    AccountDO findAccountByVerificationCode(String verificationCode);
+
+    /**
      * Deactivates an Account. The Account PrimaryKey (ID) is the email address.
      *
      * @param email as String
@@ -35,7 +45,7 @@ public interface AccountDAO extends GenericDAO<AccountDO, String> {
      * @return true on success
      */
     @API(status = STABLE, since = "1.0")
-    boolean verifyAccount(final String email);
+    boolean verifyAccount(String email);
 
     /**
      * Get all activated Accounts.

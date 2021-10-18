@@ -23,7 +23,6 @@ import org.europa.together.domain.acl.ResourcesDO;
 import org.europa.together.utils.StringUtils;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +34,12 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-@Path(Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION)
+@Path("/acl/" + Constraints.REST_API_VERSION + "/resource")
 public class ResourceService {
 
     private static final Logger LOGGER = new LogbackLogger(ResourceService.class);
 
     @Autowired
-    @Qualifier("resourcesHbmDAO")
     private ResourcesDAO resourcesDAO;
 
     public ResourceService() {
@@ -49,7 +47,7 @@ public class ResourceService {
     }
 
     @GET
-    @Path("/resource/{resource}")
+    @Path("/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchResource(final @PathParam("resource") String resourceName,
@@ -81,29 +79,7 @@ public class ResourceService {
     }
 
     @GET
-    @Path("/resource/protected")
-    @Produces({MediaType.APPLICATION_JSON})
-    @API(status = STABLE, since = "1")
-    public Response fetchProtectedResources() {
-        Response response = null;
-        try {
-            List<ResourcesDO> resource = resourcesDAO.listProtectedResources();
-            String json = objectListToJson(resource);
-            response = Response.status(Response.Status.OK)
-                    .type(MediaType.APPLICATION_JSON)
-                    .entity(json)
-                    .encoding("UTF-8")
-                    .build();
-
-        } catch (Exception ex) {
-            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
-            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-        return response;
-    }
-
-    @GET
-    @Path("/resource/all")
+    @Path("/list")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAllResources() {
@@ -125,7 +101,29 @@ public class ResourceService {
     }
 
     @GET
-    @Path("/resource/type/{resource}")
+    @Path("/list/protected")
+    @Produces({MediaType.APPLICATION_JSON})
+    @API(status = STABLE, since = "1")
+    public Response fetchProtectedResources() {
+        Response response = null;
+        try {
+            List<ResourcesDO> resource = resourcesDAO.listProtectedResources();
+            String json = objectListToJson(resource);
+            response = Response.status(Response.Status.OK)
+                    .type(MediaType.APPLICATION_JSON)
+                    .entity(json)
+                    .encoding("UTF-8")
+                    .build();
+
+        } catch (Exception ex) {
+            LOGGER.log("ERROR CODE 500 " + ex.getMessage(), LogLevel.DEBUG);
+            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/list/equalType/{resource}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchResourceOfSameType(final @PathParam("resource") String resourceType) {
@@ -151,7 +149,6 @@ public class ResourceService {
     }
 
     @PUT
-    @Path("/resource")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response updateResource(final ResourcesDO resource) {
@@ -171,7 +168,6 @@ public class ResourceService {
     }
 
     @POST
-    @Path("/resource")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response createResource(final ResourcesDO resource) {
@@ -188,14 +184,15 @@ public class ResourceService {
     }
 
     @DELETE
-    @Path("/resource/{resource}")
+    @Path("/{resource}")
     @API(status = STABLE, since = "1")
     public Response deleteResource(final @PathParam("resource") String resource,
             final @QueryParam("resourceView") String resourceView) {
 
         Response response = null;
         try {
-            LOGGER.log("DELETE >> Resource: " + resource + " View: " + resourceView, LogLevel.DEBUG);
+            LOGGER.log("DELETE >> Resource: " + resource + " View: " + resourceView,
+                    LogLevel.DEBUG);
             ResourcesDO object = resourcesDAO.find(resource, resourceView);
             if (object.isDeleteable()) {
                 resourcesDAO.delete(object);

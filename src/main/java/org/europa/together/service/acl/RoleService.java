@@ -21,7 +21,6 @@ import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,13 +31,12 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-@Path(Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION)
+@Path("/acl/" + Constraints.REST_API_VERSION + "/role")
 public class RoleService {
 
     private static final Logger LOGGER = new LogbackLogger(RoleService.class);
 
     @Autowired
-    @Qualifier("rolesHbmDAO")
     private RolesDAO rolesDAO;
 
     public RoleService() {
@@ -46,7 +44,7 @@ public class RoleService {
     }
 
     @GET
-    @Path("/role/{role}")
+    @Path("/{role}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchRole(final @PathParam("role") String roleName) {
@@ -71,7 +69,7 @@ public class RoleService {
     }
 
     @GET
-    @Path("/role/protected")
+    @Path("/list/protected")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchProtectedRoles() {
@@ -93,7 +91,7 @@ public class RoleService {
     }
 
     @GET
-    @Path("/role")
+    @Path("/list")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAllRoles() {
@@ -115,7 +113,6 @@ public class RoleService {
     }
 
     @PUT
-    @Path("/role")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response updateRole(final RolesDO role) {
@@ -135,7 +132,6 @@ public class RoleService {
     }
 
     @POST
-    @Path("/role")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response createRole(final RolesDO role) {
@@ -152,7 +148,7 @@ public class RoleService {
     }
 
     @DELETE
-    @Path("/role/{role}")
+    @Path("/{role}")
     @API(status = STABLE, since = "1")
     public Response deleteRole(final @PathParam("role") String roleName) {
         Response response = null;

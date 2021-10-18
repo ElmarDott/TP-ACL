@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.europa.together.utils.StringUtils;
-import org.europa.together.utils.acl.Constraints;
+import org.europa.together.utils.Constraints;
 import org.hibernate.annotations.CreationTimestamp;
 
 /**
@@ -23,7 +23,9 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "ACCOUNT",
         //CHECKSTYLE:OFF
         indexes = {
-            @Index(columnList = "EMAIL", name = "account_email")
+            @Index(columnList = "EMAIL", name = "account_email"),
+            @Index(columnList = "ROLE_NAME", name = "account_role"),
+            @Index(columnList = "VERIFICATION_CODE", name = "account_verification")
         }
 //CHECKSTYLE:ON
 )
@@ -49,14 +51,14 @@ public class AccountDO implements Serializable {
     private RolesDO role;
 
     @CreationTimestamp
-    @Column(name = "REGISTRATION_DATE", nullable = false)
-    private Date registrationDate;
+    @Column(name = "REGISTERED", nullable = false)
+    private Date registered;
 
-    @Column(name = "VERIFIED", nullable = false)
-    private boolean verified;
+    @Column(name = "VERIFIED")
+    private Date verified;
 
-    @Column(name = "ACTIVATED", nullable = false)
-    private boolean activated;
+    @Column(name = "DEACTIVATED")
+    private Date deactivated;
 
     @Column(name = "VERIFICATION_CODE", unique = true, nullable = false)
     private String verificationCode;
@@ -72,9 +74,8 @@ public class AccountDO implements Serializable {
      */
     public AccountDO() {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
-        this.registrationDate = new Date(System.currentTimeMillis());
-        this.activated = false;
-        this.verified = false;
+        this.registered = new Date(System.currentTimeMillis());
+        this.verificationCode = StringUtils.generateUUID();
         this.defaultLocale = "EN_en";
         this.defaultTimezone = "UTC+00:00";
     }
@@ -87,10 +88,8 @@ public class AccountDO implements Serializable {
     public AccountDO(final String email) {
         TimeZone.setDefault(Constraints.SYSTEM_DEFAULT_TIMEZONE);
         this.email = email;
-        this.registrationDate = new Date(System.currentTimeMillis());
+        this.registered = new Date(System.currentTimeMillis());
         this.verificationCode = StringUtils.generateUUID();
-        this.activated = false;
-        this.verified = false;
         this.defaultLocale = "EN_en";
         this.defaultTimezone = "UTC+00:00";
     }
@@ -124,10 +123,10 @@ public class AccountDO implements Serializable {
                 + "email=" + email
                 + ", password=" + password
                 + ", role=" + role
-                + ", registrationDate=" + registrationDate
+                + ", registrationDate=" + registered
                 + ", verificationCode=" + verificationCode
                 + ", verified=" + verified
-                + ", activated=" + activated
+                + ", activated=" + deactivated
                 + ", defaultLocale=" + defaultLocale
                 + ", defaultTimezone=" + defaultTimezone
                 + "}";
@@ -193,18 +192,15 @@ public class AccountDO implements Serializable {
      *
      * @return registrationDate as Timestamp
      */
-    public Date getRegistrationDate() {
-        Date copy = registrationDate;
-        return copy;
+    public Date isRegistered() {
+        return registered;
     }
 
     /**
      * Set the Registration Date of an Account, when it get created.
-     *
-     * @param registrationDate as Timestamp
      */
-    public void setRegistrationDate(final Date registrationDate) {
-        this.registrationDate = registrationDate;
+    public void setRegistered() {
+        this.registered = new Date(System.currentTimeMillis());
     }
 
     /**
@@ -212,18 +208,16 @@ public class AccountDO implements Serializable {
      *
      * @return true on success
      */
-    public boolean isVerified() {
+    public Date isVerified() {
         return verified;
     }
 
     /**
-     * Set an Account to verified, if the verification process was success.
-     * During the creation process is set to false.
-     *
-     * @param verified as boolean
+     * Set an Account to verified, if the verification process was
+     * success.During the creation process is set to false.
      */
-    public void setVerified(final boolean verified) {
-        this.verified = verified;
+    public void setVerified() {
+        this.verified = new Date(System.currentTimeMillis());
     }
 
     /**
@@ -231,17 +225,22 @@ public class AccountDO implements Serializable {
      *
      * @return true on success.
      */
-    public boolean isActivated() {
-        return activated;
+    public Date isDeactivated() {
+        return deactivated;
     }
 
     /**
      * Allows to block the login of an account.
-     *
-     * @param activated as boolean
      */
-    public void setActivated(final boolean activated) {
-        this.activated = activated;
+    public void setDeactivated() {
+        this.deactivated = new Date(System.currentTimeMillis());
+    }
+
+    /**
+     * Reset the deactivation of an Account, by erasing the deactivation date.
+     */
+    public void reactivateAccount() {
+        this.deactivated = null;
     }
 
     /**

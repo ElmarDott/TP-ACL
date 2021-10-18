@@ -1,15 +1,21 @@
+<img src="https://enrebaja.files.wordpress.com/2018/04/logo_250x250.png" style="float:left; height:50%; width:50%;" />
+
 # together Platform :: ACL
+
+[![License Apache 2](https://img.shields.io/github/license/ElmarDott/TP-CORE)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-2.0.2-green.svg)](https://mvnrepository.com/artifact/io.github.together.modules/core)
+[![Javadocs](https://www.javadoc.io/badge/io.github.together.modules/core.svg)](https://www.javadoc.io/doc/io.github.together.modules/core)
+[![Build Status](https://travis-ci.org/ElmarDott/TP-CORE.svg?branch=master)](https://travis-ci.org/ElmarDott/TP-CORE)
+[![Coverage Status](https://coveralls.io/repos/github/ElmarDott/TP-CORE/badge.svg?branch=master)](https://coveralls.io/github/ElmarDott/TP-CORE)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f00b311bb51247c1ac215b699b52e5ed)](https://app.codacy.com/app/ElmarDott/TP-CORE?utm_source=github.com&utm_medium=referral&utm_content=ElmarDott/TP-CORE&utm_campaign=Badge_Grade_Dashboard)
 
 The ACL Artifact is a implementation of an Access Control List.
 
 ## Getting Started
 
 Components - Release: 1.0
- * [ACL-001] Domain Objects (DO)
- * [ACL-002] Data Access Objects (DAO)
- * [ACL-003] RoleService (RESTful)
- * [ACL-004] AccountService (RESTful)
- * [ACL-005] ResourceService (RESTful)
+ * [ACL-01] Domain Objects (DO)
+ * [ACL-02] Data Access Objects (DAO)
 
 Basic concepts of this project are: KISS (Keep it simple, stupid), COC (Convention
 over configurations) and DRY (Don't repeat yourself). Also we following the programming
@@ -18,21 +24,35 @@ and Domain Driven Development (DDD).
 
 ### Prerequisites
 
-The ACL Module is build with NetBeans 11.3, Maven 3.6.1 and Java 11 SE. The
-implementation is also designed to run in Java EE 8 (e.g. Tomcat) environments.
-The most important dependencies are Hibernate 5.3, Spring 5.1 and JUnit 5. As
+The CORE Module is build with NetBeans 12.3, Maven 3.6.3 and Java 11 SE (openJDK).
+The implementation is also designed to run in Java EE 9 (e.g. Tomcat) environments.
+The most important dependencies are Hibernate 5.4, Spring 5.3 and JUnit 5. As
 Database Server (DBMS) we recommend PostgeSQL DBMS 11.
 
 We decided to use docker for an easy database setup. After on your system docker
 is running you are be able to setup the database by the following steps:
 
-  * docker pull postgres
-  * docker run -d -p 5432:5432 --name postgres -v /home/user/docker/postgreSQL:/var/lib/postgresql/data postgres
-  * docker start postgres
-  * docker stop postgres
+  docker network create -d bridge --subnet=172.18.0.0/16 services
+
+  docker run -d --name postgres --restart=no \
+  -p 5432:5432 --net services --ip 172.18.0.2 \
+  -e POSTGRES_PASSWORD=s3cr3t \
+  -e PGPASSWORD=s3cr3t \
+  -v /home/user/docker/postgres:/var/lib/postgresql/data \
+  postgres:11
+
+  docker run -d --name pgadmin --restart=no \
+  -p 8004:80 --net services --ip 172.18.0.98 \
+  -e PGADMIN_DEFAULT_EMAIL=elmar.dott@gmail.com \
+  -e PGADMIN_DEFAULT_PASSWORD=s3cr3t \
+  --link postgres:11 \
+  dpage/pgadmin4:4.29
 
   URI/>  172.17.0.1:5432   User: postgres PWD: n/a
   DOC/>  https://docs.docker.com/samples/library/postgres/
+
+  * docker start postgres
+  * docker stop postgres
 
 To create user and schemata (also for testing), you are be able to use TP-CM/dbms/src/sql/initial_postgresql.sql
 script. If you need a short introduction about docker, you can check our tutorial on [YouTube](https://www.youtube.com/channel/UCBdJ0zh8xnMrQ-xQ4Gymy2Q).
@@ -59,7 +79,7 @@ Please check the Release Notes for published Artifact Versions.
 <dependency>
     <groupId>io.github.together.modules</groupId>
     <artifactId>acl</artifactId>
-    <version>1.0.0</version>
+    <version>1.0</version>
 </dependency>
 ```
 
@@ -89,8 +109,3 @@ In the case you like this project, let me know it and rate it with a star.
 |--------|----------------------------------------------------------------------
 | 1.0    | in process
 |        | - Add Functionality: Domain Model
-|        | - Add Functionality: Domain Access Objects
-|        | - Add Functionality: RESTful services
-
-
-

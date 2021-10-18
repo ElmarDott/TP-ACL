@@ -40,9 +40,6 @@ public class ResourcesDO implements Serializable {
     @Column(name = "TEMPLATE")
     private String view;
 
-    @Column(name = "ACTIONS")
-    private String actions;
-
     @Column(name = "DELETEABLE")
     private boolean deleteable;
 
@@ -52,7 +49,6 @@ public class ResourcesDO implements Serializable {
     public ResourcesDO() {
         this.deleteable = true;
         this.view = "default";
-        this.actions = "ALL";
     }
 
     /**
@@ -64,7 +60,6 @@ public class ResourcesDO implements Serializable {
         this.resourceName = resourceName;
         this.view = "default";
         this.deleteable = true;
-        this.actions = "ALL";
     }
 
     @Override
@@ -96,7 +91,6 @@ public class ResourcesDO implements Serializable {
         return "ResourcesDO{"
                 + "name=" + resourceName
                 + ", view=" + view
-                + ", actions=" + actions
                 + ", deleteable=" + deleteable
                 + "}";
     }
@@ -137,25 +131,6 @@ public class ResourcesDO implements Serializable {
      */
     public void setView(final String view) {
         this.view = view;
-    }
-
-    /**
-     * Fetch all possible actions, as comma separated String, for a resource.
-     * Action could be: approval, publish, reject and so on.
-     *
-     * @return actions as String
-     */
-    public String getActions() {
-        return actions;
-    }
-
-    /**
-     * Ad actions like: approval, publish, reject and so on to a resource.
-     *
-     * @param actions as String
-     */
-    public void setActions(final String actions) {
-        this.actions = actions;
     }
 
     /**

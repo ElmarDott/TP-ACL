@@ -1,6 +1,7 @@
 package org.europa.together.domain.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.*;
+import java.util.Date;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -23,36 +24,9 @@ import org.junit.runner.RunWith;
 public class AccountDOTest {
 
     private static final Logger LOGGER = new LogbackLogger(AccountDOTest.class);
-    private static ValidatorFactory validatorFactory;
-    private static Validator validate;
-
-    //<editor-fold defaultstate="collapsed" desc="Test Preparation">
-    @BeforeAll
-    static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be executed.\n", LogLevel.TRACE);
-    }
-
-    @AfterAll
-    static void tearDown() {
-        LOGGER.log("### TEST SUITE TERMINATED.", LogLevel.TRACE);
-    }
-
-    @BeforeEach
-    void testCaseInitialization() {
-        validatorFactory = Validation.buildDefaultValidatorFactory();
-        validate = validatorFactory.getValidator();
-    }
-
-    @AfterEach
-    void testCaseTermination() {
-        validatorFactory.close();
-        LOGGER.log("TEST CASE TERMINATED.\n", LogLevel.TRACE);
-    }
-    //</editor-fold>
 
     @Test
-    void testDomainObject() {
+    void domainObject() {
         LOGGER.log("TEST CASE: domainObject()", LogLevel.DEBUG);
 
         assertThat(AccountDO.class, hasValidBeanConstructor());
@@ -63,7 +37,31 @@ public class AccountDOTest {
     }
 
     @Test
-    void testIsEqual() {
+    void register() {
+        LOGGER.log("TEST CASE: register()", LogLevel.DEBUG);
+
+        AccountDO account = new AccountDO("register");
+        Date registration = account.isRegistered();
+        assertNotNull(registration);
+
+        account.setRegistered();
+        assertNotEquals(registration, account.isRegistered());
+    }
+
+    @Test
+    void reactivateAccount() {
+        LOGGER.log("TEST CASE: reactivatedAccount()", LogLevel.DEBUG);
+
+        AccountDO account = new AccountDO("reactivate");
+        account.setDeactivated();
+
+        assertNotNull(account.isDeactivated());
+        account.reactivateAccount();
+        assertNull(account.isDeactivated());
+    }
+
+    @Test
+    void isEqual() {
         LOGGER.log("TEST CASE: objectIsEqual()", LogLevel.DEBUG);
 
         AccountDO first = new AccountDO("test@sample.org");
@@ -73,7 +71,7 @@ public class AccountDOTest {
     }
 
     @Test
-    void testIsNotEqual() {
+    void isNotEqual() {
         LOGGER.log("TEST CASE: objectisNotEqual()", LogLevel.DEBUG);
 
         AccountDO first = new AccountDO("a@sample.org");

@@ -34,11 +34,21 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
     }
 
     @Override
+    public AccountDO findAccountByVerificationCode(final String verificationCode) {
+        CriteriaBuilder builder = mainEntityManagerFactory.getCriteriaBuilder();
+        CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
+        // create Criteria
+        Root<AccountDO> root = query.from(AccountDO.class);
+        query.where(builder.equal(root.get("verificationCode"), verificationCode));
+        return mainEntityManagerFactory.createQuery(query).getSingleResult();
+    }
+
+    @Override
     public boolean deactivateAccount(final String email) {
         boolean success = false;
         AccountDO account = find(email);
-        if (account.isActivated()) {
-            account.setActivated(false);
+        if (account.isDeactivated() != null) {
+            account.setDeactivated();
             success = true;
         } else {
             LOGGER.log("Account " + email + " already is deactivated.", LogLevel.WARN);
@@ -50,8 +60,8 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
     public boolean verifyAccount(final String email) {
         boolean success = false;
         AccountDO account = find(email);
-        if (account.isVerified()) {
-            account.setVerified(true);
+        if (account.isVerified() != null) {
+            account.setVerified();
             success = true;
         } else {
             LOGGER.log("Account " + email + " already is verified.", LogLevel.WARN);
@@ -66,7 +76,7 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
         CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
         // create Criteria
         Root<AccountDO> root = query.from(AccountDO.class);
-        query.where(builder.equal(root.get("activated"), true));
+        query.where(builder.isNull(root.get("deactivated")));
 
         return mainEntityManagerFactory.createQuery(query).getResultList();
     }
@@ -78,7 +88,7 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
         CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
         // create Criteria
         Root<AccountDO> root = query.from(AccountDO.class);
-        query.where(builder.equal(root.get("activated"), false));
+        query.where(builder.isNotNull(root.get("deactivated")));
 
         return mainEntityManagerFactory.createQuery(query).getResultList();
     }
@@ -90,7 +100,7 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
         CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
         // create Criteria
         Root<AccountDO> root = query.from(AccountDO.class);
-        query.where(builder.equal(root.get("verified"), false));
+        query.where(builder.isNull(root.get("verified")));
 
         return mainEntityManagerFactory.createQuery(query).getResultList();
     }
@@ -114,7 +124,7 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
         CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
         // create Criteria
         Root<AccountDO> root = query.from(AccountDO.class);
-        query.where(builder.lessThanOrEqualTo(root.get("registrationDate"), date));
+        query.where(builder.lessThanOrEqualTo(root.get("registered"), date));
 
         return mainEntityManagerFactory.createQuery(query).getResultList();
     }
@@ -126,7 +136,7 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
         CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
         // create Criteria
         Root<AccountDO> root = query.from(AccountDO.class);
-        query.where(builder.greaterThanOrEqualTo(root.get("registrationDate"), date));
+        query.where(builder.greaterThanOrEqualTo(root.get("registered"), date));
 
         return mainEntityManagerFactory.createQuery(query).getResultList();
     }

@@ -24,7 +24,6 @@ import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,21 +34,18 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-@Path(Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION)
+@Path("/acl/" + Constraints.REST_API_VERSION + "/account")
 public class AccountService {
 
     private static final Logger LOGGER = new LogbackLogger(AccountService.class);
 
     @Autowired
-    @Qualifier("accountHbmDAO")
     private AccountDAO accountDAO;
 
     @Autowired
-    @Qualifier("loginHbmDAO")
     private LoginDAO loginDAO;
 
     @Autowired
-    @Qualifier("rolesHbmDAO")
     private RolesDAO rolesDAO;
 
     public AccountService() {
@@ -57,13 +53,16 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/{account}")
+    @Path("/{account}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAccount(final @PathParam("account") String accountId) {
         Response response = null;
         try {
+            LOGGER.log("LOOKUP :" + accountId, LogLevel.DEBUG);
             AccountDO account = accountDAO.find(accountId);
+            LOGGER.log("LOOKUP :" + account.toString(), LogLevel.DEBUG);
+
             String json = accountDAO.serializeAsJson(account);
             if (account != null) {
                 response = Response.status(Response.Status.OK)
@@ -82,7 +81,7 @@ public class AccountService {
     }
 
     @PUT
-    @Path("/account/deactivate/{account}")
+    @Path("/deactivate/{account}")
     @Consumes({MediaType.TEXT_PLAIN})
     @API(status = STABLE, since = "1")
     public Response deactivateAccount(final @PathParam("account") String accountId) {
@@ -104,7 +103,7 @@ public class AccountService {
     }
 
     @PUT
-    @Path("/account/verify/{account}")
+    @Path("/verify/{account}")
     @Consumes({MediaType.TEXT_PLAIN})
     @API(status = STABLE, since = "1")
     public Response verifyAccount(final @PathParam("account") String accountId) {
@@ -112,7 +111,7 @@ public class AccountService {
         try {
             AccountDO account = accountDAO.find(accountId);
             if (account != null) {
-                account.setVerified(true);
+                account.setVerified();
                 accountDAO.update(accountId, account);
                 response = Response.status(Response.Status.ACCEPTED).build();
             } else {
@@ -127,7 +126,6 @@ public class AccountService {
     }
 
     @PUT
-    @Path("/account")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response updateAccount(final AccountDO account) {
@@ -147,7 +145,6 @@ public class AccountService {
     }
 
     @POST
-    @Path("/account")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response createAccount(final AccountDO account) {
@@ -171,7 +168,7 @@ public class AccountService {
     }
 
     @DELETE
-    @Path("/account/{account}")
+    @Path("/{account}")
     @API(status = STABLE, since = "1")
     public Response deleteAccount(final @PathParam("account") String accountId) {
         Response response = null;
@@ -202,7 +199,7 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/list")
+    @Path("/list")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAllAccount(final @PathParam("account") String accountId) {
@@ -223,7 +220,7 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/list/not-confirmed")
+    @Path("/list/not-confirmed")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchNotConfirmedAccount() {
@@ -245,7 +242,7 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/list/activated")
+    @Path("/list/activated")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchActivatedAccount() {
@@ -267,7 +264,7 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/list/deactivated")
+    @Path("/list/deactivated")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchDeactivatedAccount() {
@@ -289,7 +286,7 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/list/{role}")
+    @Path("/list/{role}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAccountsOfRole(final @PathParam("role") String role) {
@@ -310,7 +307,7 @@ public class AccountService {
     }
 
     @GET
-    @Path("/account/list/logins/{account}")
+    @Path("/list/logins/{account}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchLoginsOfAccount(final @PathParam("account") String accountId) {

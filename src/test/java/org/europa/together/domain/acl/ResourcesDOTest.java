@@ -22,36 +22,9 @@ import org.junit.runner.RunWith;
 public class ResourcesDOTest {
 
     private static final Logger LOGGER = new LogbackLogger(ResourcesDOTest.class);
-    private static ValidatorFactory validatorFactory;
-    private static Validator validate;
-
-    //<editor-fold defaultstate="collapsed" desc="Test Preparation">
-    @BeforeAll
-    static void setUp() {
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        LOGGER.log("Assumption terminated. TestSuite will be executed.\n", LogLevel.TRACE);
-    }
-
-    @AfterAll
-    static void tearDown() {
-        LOGGER.log("### TEST SUITE TERMINATED.", LogLevel.TRACE);
-    }
-
-    @BeforeEach
-    void testCaseInitialization() {
-        validatorFactory = Validation.buildDefaultValidatorFactory();
-        validate = validatorFactory.getValidator();
-    }
-
-    @AfterEach
-    void testCaseTermination() {
-        validatorFactory.close();
-        LOGGER.log("TEST CASE TERMINATED.\n", LogLevel.TRACE);
-    }
-    //</editor-fold>
 
     @Test
-    void testDomainObject() {
+    void domainObject() {
         LOGGER.log("TEST CASE: domainObject()", LogLevel.DEBUG);
 
         assertThat(ResourcesDO.class, hasValidBeanConstructor());

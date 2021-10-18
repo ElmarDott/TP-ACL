@@ -22,11 +22,8 @@ import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.PermissionId;
-import org.europa.together.domain.acl.ResourcesDO;
-import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -38,21 +35,18 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-@Path(Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION)
+@Path("/acl/" + Constraints.REST_API_VERSION + "/permission")
 public class PermissionService {
 
     private static final Logger LOGGER = new LogbackLogger(PermissionService.class);
 
     @Autowired
-    @Qualifier("permissionHbmDAO")
     private PermissionDAO permissionDAO;
 
     @Autowired
-    @Qualifier("rolesHbmDAO")
     private RolesDAO rolesDAO;
 
     @Autowired
-    @Qualifier("resourcesHbmDAO")
     private ResourcesDAO resourcesDAO;
 
     public PermissionService() {
@@ -60,7 +54,7 @@ public class PermissionService {
     }
 
     @GET
-    @Path("/permission/{id}")
+    @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchPermission(final @PathParam("id") String permissionId) {
@@ -86,7 +80,7 @@ public class PermissionService {
     }
 
     @GET
-    @Path("/permission/all")
+    @Path("/list")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAllPermissions() {
@@ -108,7 +102,7 @@ public class PermissionService {
     }
 
     @GET
-    @Path("/permission/forRole/{roleName}")
+    @Path("/list/forRole/{roleName}")
     @Produces({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response fetchAllPermissionsOfARole(final @PathParam("roleName") String roleName) {
@@ -134,7 +128,6 @@ public class PermissionService {
     }
 
     @PUT
-    @Path("/permission")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response updatePermission(final PermissionDO permission) {
@@ -154,7 +147,6 @@ public class PermissionService {
     }
 
     @POST
-    @Path("/permission")
     @Consumes({MediaType.APPLICATION_JSON})
     @API(status = STABLE, since = "1")
     public Response createPermission(final PermissionDO entity) {
@@ -171,8 +163,10 @@ public class PermissionService {
             permission.setDelete(entity.isDelete());
             permission.setRead(entity.isRead());
 
-            LOGGER.log("Service: " + permission.getPermissionId().getRole().toString(), LogLevel.DEBUG);
-            LOGGER.log("Service: " + permission.getPermissionId().getResource().toString(), LogLevel.DEBUG);
+            LOGGER.log("Service: " + permission.getPermissionId().getRole().toString(),
+                    LogLevel.DEBUG);
+            LOGGER.log("Service: " + permission.getPermissionId().getResource().toString(),
+                    LogLevel.DEBUG);
             LOGGER.log("Service: " + permission.toString(), LogLevel.DEBUG);
 
             permissionDAO.create(permission);
@@ -189,7 +183,7 @@ public class PermissionService {
     }
 
     @DELETE
-    @Path("/permission/{id}")
+    @Path("/{id}")
     @API(status = STABLE, since = "1")
     public Response deletePermission(final @PathParam("id") String permissionId) {
         Response response = null;

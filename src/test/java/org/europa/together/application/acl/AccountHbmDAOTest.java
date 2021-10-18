@@ -1,6 +1,7 @@
 package org.europa.together.application.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -16,6 +17,7 @@ import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.RolesDO;
+import org.europa.together.utils.Constraints;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -28,42 +30,37 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
 @RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:/org/europa/together/configuration/spring-dao-test.xml"})
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class AccountHbmDAOTest {
 
     private static final Logger LOGGER = new LogbackLogger(AccountHbmDAOTest.class);
-    private static DatabaseActions actions = new JdbcActions(true);
-    private static final String FLUSH_TABLES = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
-    private static final String FILE = "org/europa/together/sql/acl/testdata_ACL.sql";
+
+    private static final String FLUSH_TABLE
+            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+    private static final String FILE
+            = "org/europa/together/sql/acl/testdata_ACL.sql";
 
     @Autowired
-    @Qualifier("accountHbmDAO")
     private AccountDAO accountDAO;
 
     @Autowired
-    @Qualifier("rolesHbmDAO")
     private RolesDAO rolesDAO;
+
+    private static DatabaseActions jdbcActions = new JdbcActions();
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
+        Assumptions.assumeTrue(jdbcActions.connect("test"));
+
         LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
-        boolean check = true;
-        String out = "executed";
-        boolean socket = actions.connect("default");
-        if (!socket) {
-            out = "skiped.";
-            check = false;
-        }
-        LOGGER.log("Assumption terminated. TestSuite will be " + out, LogLevel.TRACE);
-        Assumptions.assumeTrue(check);
+        jdbcActions.executeSqlFromClasspath(FILE);
     }
 
     @AfterAll
@@ -76,23 +73,34 @@ public class AccountHbmDAOTest {
     }
 
     @AfterEach
-    void testCaseTermination() {
-        actions.executeQuery(FLUSH_TABLES);
+    void testCaseTermination() throws SQLException {
+        jdbcActions.executeQuery(FLUSH_TABLE);
         LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
     @Test
-    void testConstructor() {
+    void constructor() {
         LOGGER.log("TEST CASE: constructor", LogLevel.DEBUG);
         assertThat(AccountHbmDAO.class, hasValidBeanConstructor());
+    }
+
+    @Test
+    void findAccountByVerificationCode() {
+        LOGGER.log("TEST CASE: findAccountByVerificationCode", LogLevel.DEBUG);
+
+        jdbcActions.executeSqlFromClasspath(FILE);
+        AccountDO account = accountDAO
+                .findAccountByVerificationCode("2b421f4c-4408-4f99-b1aa-25002b85ea87");
+
+        assertEquals("admin@sample.org", account.getEmail());
     }
 
     @Test
     void findAccountByEmail() {
         LOGGER.log("TEST CASE: findAccountByEmail", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         AccountDO account = accountDAO.find("admin@sample.org");
         RolesDO role = account.getRole();
 
@@ -101,43 +109,44 @@ public class AccountHbmDAOTest {
     }
 
     @Test
-    void testCreateAccountWithRole() {
+    void createAccountWithRole() {
         LOGGER.log("TEST CASE: createAccountWithRole", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         AccountDO account = new AccountDO("create@sample.org");
         account.setRole(rolesDAO.find("Guest"));
         assertTrue(accountDAO.create(account));
     }
 
     @Test
-    void testUpdateAccount() {
+    void updateAccount() {
         LOGGER.log("TEST CASE: updateAccount", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         AccountDO account = accountDAO.find("moderator_01@sample.org");
-        assertFalse(account.isVerified());
-        account.setVerified(true);
+
+        assertNull(account.isVerified());
+        account.setVerified();
 
         assertTrue(accountDAO.update("moderator_01@sample.org", account));
-        assertTrue(accountDAO.find("moderator_01@sample.org").isVerified());
+        assertNotNull(accountDAO.find("moderator_01@sample.org").isVerified());
     }
 
     @Test
-    void testDeleteAccountWhitoutLogins() {
+    void deleteAccountWhitoutLogins() {
         LOGGER.log("TEST CASE: deleteAccountWhitoutLogins", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         AccountDO account = accountDAO.find("moderator_02@sample.org");
 
         assertTrue(accountDAO.delete("moderator_02@sample.org"));
     }
 
     @Test
-    void testFailDeleteAccountWithLogins() throws Exception {
+    void failDeleteAccountWithLogins() throws Exception {
         LOGGER.log("TEST CASE: failDeleteAccountWithLogins", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         AccountDO account = accountDAO.find("moderator@sample.org");
         assertNotNull(account);
 
@@ -147,75 +156,75 @@ public class AccountHbmDAOTest {
     }
 
     @Test
-    void testListDeactivatedAccounts() {
+    void listDeactivatedAccounts() {
         LOGGER.log("TEST CASE: listDeactivatedAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertEquals(3, accountDAO.listDeactivatedAccounts().size());
     }
 
     @Test
-    void testListActivatedAccounts() {
+    void listActivatedAccounts() {
         LOGGER.log("TEST CASE: listActivatedAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertEquals(3, accountDAO.listActivatedAccounts().size());
     }
 
     @Test
-    void testListUnverifiedAccounts() {
+    void listUnverifiedAccounts() {
         LOGGER.log("TEST CASE: listUnverifiedAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertEquals(1, accountDAO.listNotConfirmedAccounts().size());
     }
 
     @Test
-    void testVerifyAccount() {
+    void verifyAccount() {
         LOGGER.log("TEST CASE: verifyAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertTrue(accountDAO.verifyAccount("moderator_02@sample.org"));
     }
 
     @Test
-    void testFailVerifyAccount() {
+    void failVerifyAccount() {
         LOGGER.log("TEST CASE: failVerifyAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertFalse(accountDAO.verifyAccount("moderator_01@sample.org"));
     }
 
     @Test
-    void testDeactivateAccount() {
+    void deactivateAccount() {
         LOGGER.log("TEST CASE: deactivateAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertTrue(accountDAO.deactivateAccount("moderator_01@sample.org"));
     }
 
     @Test
-    void testFailDeactivateAccount() {
+    void failDeactivateAccount() {
         LOGGER.log("TEST CASE: failDeactivateAccounts", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         assertFalse(accountDAO.deactivateAccount("moderator_02@sample.org"));
     }
 
     @Test
-    void testGetAllAccountsOfARole() {
+    void getAllAccountsOfARole() {
         LOGGER.log("TEST CASE: getAccountsOfRole", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         List<AccountDO> accounts = accountDAO.listAccountsOfRole("Moderator");
         assertEquals(3, accounts.size());
     }
 
     @Test
-    void testgetRegistrationDateBefore() {
+    void getRegistrationDateBefore() {
         LOGGER.log("TEST CASE: getRegistrationDateBefore", LogLevel.DEBUG);
 
-        actions.executeSqlFromClasspath(FILE);
+        jdbcActions.executeSqlFromClasspath(FILE);
         Timestamp date = new Timestamp(System.currentTimeMillis());
         List<AccountDO> accounts = accountDAO.listRegisterdAcountsBeforeDate(date);
 
@@ -223,11 +232,11 @@ public class AccountHbmDAOTest {
     }
 
     @Test
-    void testgetRegistrationDateAfter() {
+    void getRegistrationDateAfter() {
         try {
             LOGGER.log("TEST CASE: getRegistrationDateAfter", LogLevel.DEBUG);
 
-            actions.executeSqlFromClasspath(FILE);
+            jdbcActions.executeSqlFromClasspath(FILE);
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date date = dateFormat.parse("1984-03-30 12:00:01");
 
