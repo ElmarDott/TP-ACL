@@ -9,28 +9,24 @@
 
     <name>ACL</name>
     <description>Access Control List</description>
+    <url>https://elmar-dott.com</url>
 
     <parent>
         <groupId>io.github.together</groupId>
         <artifactId>build-workflow</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.4-SNAPSHOT</version>
     </parent>
 
     <groupId>io.github.together.modules</groupId>
     <artifactId>acl</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <properties>
-        <skipUnitTests>false</skipUnitTests>
-        <skipIntegrationTests>false</skipIntegrationTests>
-        <skipJarSigner>false</skipJarSigner>
-        <skipJavaDoc>false</skipJavaDoc>
-        <skipEnforcer>false</skipEnforcer>
-        <skipCoveralls>true</skipCoveralls>
-        <skipSwagger>true</skipSwagger>
-        <skipClover>true</skipClover>
-    </properties>
+    <modules>
+        <module>api</module>
+        <module>server</module>
+        <module>client</module>
+    </modules>
 
     <scm>
         <connection>scm:git:https://github.com/ElmarDott/TP-ACL.git</connection>
@@ -49,92 +45,11 @@
         <url><![CDATA[https://github.com/ElmarDott/TP-ACL/issues?sort=created&direction=desc&state=open]]></url>
     </issueManagement>
 
-    <build>
-        <filters>
-            <filter>src/main/filter/module.properties</filter>
-            <filter>src/main/filter/database.properties</filter>
-        </filters>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources-filtered/</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources-filtered/</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultEntries/>
-                            <addDefaultImplementationEntries/>
-                            <addDefaultSpecificationEntries/>
-                            <addBuildEnvironmentEntries/>
-                        </manifest>
-                        <manifestEntries>
-                            <Automatic-Module-Name>${project.groupId}.${project.artifactId}</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <configuration>
-                    <repoToken>${coveralls.token.tpAcl}</repoToken>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <configuration>
-                    <resourcePackages>
-                        <package>org.europa.together.service.acl</package>
-                    </resourcePackages>
-                    <outputPath>${basedir}/src/main/resources/org/europa/together/configuration/acl</outputPath>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>io.github.together.modules</groupId>
             <artifactId>core</artifactId>
             <version>3.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- Bundels -->
-        <dependency>
-            <groupId>io.github.together.libraries</groupId>
-            <artifactId>bundle-jakarta</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>io.github.together.libraries</groupId>
-            <artifactId>bundle-spring</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>io.github.together.libraries</groupId>
-            <artifactId>bundle-hibernate</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>io.github.together.libraries</groupId>
-            <artifactId>bundle-spring-security</artifactId>
-            <type>pom</type>
         </dependency>
     </dependencies>
 </project>

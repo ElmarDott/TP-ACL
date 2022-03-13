@@ -13,3 +13,8 @@
 /cobertura.ser
 /faces-config.NavData
 /**/swagger-API.json
+/acl-api/target/
+/acl-impl/target/
+/api/target/
+/server/target/
+/client/target/

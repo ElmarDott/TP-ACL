@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                        http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>ACL CLIENT</name>
+    <description>Implementation</description>
+    <url>https://elmar-dott.com</url>
+
+    <parent>
+        <groupId>io.github.together.modules</groupId>
+        <artifactId>acl</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <groupId>io.github.together.modules.acl</groupId>
+    <artifactId>client</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <skipUnitTests>false</skipUnitTests>
+        <skipIntegrationTests>false</skipIntegrationTests>
+        <skipJarSigner>false</skipJarSigner>
+        <skipJavaDoc>false</skipJavaDoc>
+        <skipEnforcer>false</skipEnforcer>
+        <skipCoveralls>true</skipCoveralls>
+        <skipSwagger>true</skipSwagger>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <configuration>
+                    <repoToken>${coveralls.token.tpAcl}</repoToken>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <configuration>
+                    <resourcePackages>
+                        <package>org.europa.together.service.acl</package>
+                    </resourcePackages>
+                    <outputPath>${basedir}/src/main/resources-filtered/org/europa/together/configuration/acl</outputPath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.together.modules.acl</groupId>
+            <artifactId>api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Bundels -->
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-jakarta</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>io.github.together.libraries</groupId>
+            <artifactId>bundle-spring</artifactId>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+</project>
