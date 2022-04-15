@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>ACL CLIENT</name>
-    <description>Implementation</description>
+    <description>REST CLIENT</description>
     <url>https://elmar-dott.com</url>
 
     <parent>
@@ -48,17 +48,6 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <configuration>
                     <repoToken>${coveralls.token.tpAcl}</repoToken>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <configuration>
-                    <resourcePackages>
-                        <package>org.europa.together.service.acl</package>
-                    </resourcePackages>
-                    <outputPath>${basedir}/src/main/resources-filtered/org/europa/together/configuration/acl</outputPath>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,6 +1,6 @@
-<img src="https://enrebaja.files.wordpress.com/2018/04/logo_250x250.png" style="float:left; height:50%; width:50%;" />
+<img src="https://elmar-dott.com/wp-content/uploads/ElmarDott.com_.jpg" style="float:left; height:50%; width:50%;" />
 
-# together Platform :: ACL
+# Together Platform :: ACL
 
 [![License Apache 2](https://img.shields.io/github/license/ElmarDott/TP-CORE)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-2.0.2-green.svg)](https://mvnrepository.com/artifact/io.github.together.modules/core)
@@ -9,28 +9,21 @@
 [![Coverage Status](https://coveralls.io/repos/github/ElmarDott/TP-CORE/badge.svg?branch=master)](https://coveralls.io/github/ElmarDott/TP-CORE)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f00b311bb51247c1ac215b699b52e5ed)](https://app.codacy.com/app/ElmarDott/TP-CORE?utm_source=github.com&utm_medium=referral&utm_content=ElmarDott/TP-CORE&utm_campaign=Badge_Grade_Dashboard)
 
-The ACL Artifact is a implementation of an Access Control List.
-
 ## Getting Started
+Access Control List. Functions - Release: 1.0
 
-Components - Release: 1.0
- * [ACL-01] Domain Objects (DO)
- * [ACL-02] Data Access Objects (DAO)
+ * [ACL-01] Configure Module
+ * [ACL-02] Registration
+ * [ACL-03] Login / Logout
+ * [ACL-04] Reset Password
 
-Basic concepts of this project are: KISS (Keep it simple, stupid), COC (Convention
-over configurations) and DRY (Don't repeat yourself). Also we following the programming
-paradigms of: Test Driven Development (TDD), Behavioral Driven Development (BDD)
-and Domain Driven Development (DDD).
+Please also check out the [Wiki](https://github.com/ElmarDott/TP-ACL/wiki/home) for further information.
 
 ### Prerequisites
 
-The CORE Module is build with NetBeans 12.3, Maven 3.6.3 and Java 11 SE (openJDK).
-The implementation is also designed to run in Java EE 9 (e.g. Tomcat) environments.
-The most important dependencies are Hibernate 5.4, Spring 5.3 and JUnit 5. As
-Database Server (DBMS) we recommend PostgeSQL DBMS 11.
+The ACL Module is build with NetBeans, Maven and Java SE (openJDK). The most important dependencies are Hibernate, Spring and JUnit 5. As Database Server (DBMS) PostgeSQL DBMS 11 is recommended.
 
-We decided to use docker for an easy database setup. After on your system docker
-is running you are be able to setup the database by the following steps:
+Docker was chosen for an simple and fast database setup. In the case you wish to have a short introduction about docker, you can check my tutorial on [BitCute](https://elmar-dott.com/articles/tutorial/docker-basics/). After on your system docker is running, you are be able to setup the database by the following steps:
 
   docker network create -d bridge --subnet=172.18.0.0/16 services
 
@@ -43,49 +36,55 @@ is running you are be able to setup the database by the following steps:
 
   docker run -d --name pgadmin --restart=no \
   -p 8004:80 --net services --ip 172.18.0.98 \
-  -e PGADMIN_DEFAULT_EMAIL=elmar.dott@gmail.com \
+  -e PGADMIN_DEFAULT_EMAIL=myself@sample.com \
   -e PGADMIN_DEFAULT_PASSWORD=s3cr3t \
   --link postgres:11 \
   dpage/pgadmin4:4.29
 
-  URI/>  172.17.0.1:5432   User: postgres PWD: n/a
-  DOC/>  https://docs.docker.com/samples/library/postgres/
+  **URI**/>  172.17.0.1:5432   User: postgres PWD: n/a
+  **DOC**/>  https://docs.docker.com/samples/library/postgres/
 
   * docker start postgres
   * docker stop postgres
 
-To create user and schemata (also for testing), you are be able to use TP-CM/dbms/src/sql/initial_postgresql.sql
-script. If you need a short introduction about docker, you can check our tutorial on [YouTube](https://www.youtube.com/channel/UCBdJ0zh8xnMrQ-xQ4Gymy2Q).
+To create default user and schemata (also for testing), you are be able to use [TP-CM/dbms/src/sql/initial_postgresql.sql](https://github.com/ElmarDott/TP-CM/blob/master/dbms/src/sql/initial_postgresql.sql) script. 
 
 ### Build
 
-To build the Project you will need the parent-pom from the TP-CM project
-(build-workflow). The project configurations are available in src/main/filter/
-directory.
+TP-ACL uses always the current version of Apache Maven. To build the project by your own you will need the current version from the master branch of the parent-pom from the TP-CM project (build-workflow).
 
-In the case there is no DBMS available, all test cases which depend on Database
-access will skipped.
+TP-ACL depends on TP-CORE.
+
+The project configurations are available in src/main/filter/ directory.
+
+In the case no DBMS is available, all test cases which depend on Database access will skipped.
+
 
 ### Installing
-All released Artifacts will be available on Maven Central for usage. To fit with the
-hosting restriction on Sonatype Open Source Project Repository Hosting, it was necessary
-to change the POM GAV. As Result the Java packages do not fit with the pom GAV. So you
-are be able to use the artifact in your project as dependency with the following entry:
+All released artifacts are available on Maven Central for free usage. You are be able to use the released artifact in your project as dependency with the following entry:
 
-Please check the Release Notes for published Artifact Versions.
 **Maven**
-
 ```
 <dependency>
-    <groupId>io.github.together.modules</groupId>
-    <artifactId>acl</artifactId>
-    <version>1.0</version>
+    <groupId>io.github.together.modules.acl</groupId>
+    <artifactId>api</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>io.github.together.modules.acl</groupId>
+    <artifactId>server</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>io.github.together.modules.acl</groupId>
+    <artifactId>client</artifactId>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 ## Authors
 
-* **Elmar Dott** - *Concept, Architecture, Development* - [enRebaja](https://enRebaja.wordpress.com)
+* **Elmar Dott** - [*Concept, Architecture, Development*](https://elmar-dott.com)
 
 ## License
 
@@ -93,13 +92,9 @@ This project is licensed under the Apache 2.0 license.
 
 ## Contributors
 
-Feel free to send a request by e-mail in the case you want to contribute the
-project. Everyone is welcome, even beginners in programming. We also appreciate
-help by optimizing our documentation and creating tutorials.
+Feel free open a pull request or to send a feature request by e-mail in the case you want to contribute the project. Everyone is welcome, even beginners in programming. I also appreciate help by optimizing the documentation and creating tutorials.
 
-Mistakes happen. But we only able to fix them, when we you inform us you find a
-bug. Do not hesitate to send a report in the way you feel common. We try to give
-as much as possible fast & direct support.
+Mistakes happen. But we only able to fix them, when we you inform us you found a bug. Do not hesitate to send a report in the way you feel common. I try to give as much as possible fast & direct support.
 
 In the case you like this project, let me know it and rate it with a star.
 
