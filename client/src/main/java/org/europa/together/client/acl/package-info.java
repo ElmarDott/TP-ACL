@@ -4,4 +4,4 @@
  *
  * @since 1.0
  */
-package org.europa.together.service.acl;
+package org.europa.together.client.acl;
