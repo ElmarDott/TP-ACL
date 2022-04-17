@@ -29,13 +29,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class AccountServiceIT {
@@ -99,10 +96,10 @@ public class AccountServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
+        assertEquals(200, response.getStatus());
+
         ObjectMapper mapper = new ObjectMapper();
         AccountDO object = mapper.readValue(response.readEntity(String.class), AccountDO.class);
-
-        assertEquals(200, response.getStatus());
         assertEquals("admin@sample.org", object.getEmail());
     }
 
@@ -300,11 +297,10 @@ public class AccountServiceIT {
     void createAccountStatus201() {
         LOGGER.log("TEST CASE: createAccount() 201 : CREATED", LogLevel.DEBUG);
 
-        Response response;
         AccountDO account = new AccountDO("new@sample.org");
         LOGGER.log(account.toString(), LogLevel.DEBUG);
 
-        response = target
+        Response response = target
                 .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(account));

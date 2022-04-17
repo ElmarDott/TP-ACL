@@ -26,13 +26,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class ResourceServiceIT {
@@ -305,14 +302,12 @@ public class ResourceServiceIT {
     void createResourcesStatus201() {
         LOGGER.log("TEST CASE: createResources() 201 : CREATED", LogLevel.DEBUG);
 
-        Response response;
-
         ResourcesDO resource = new ResourcesDO();
         resource.setName("CREATE");
         resource.setView("default");
         resource.setDeleteable(true);
 
-        response = target
+        Response response = target
                 .path(API_PATH)
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.json(resource));

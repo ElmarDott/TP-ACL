@@ -29,13 +29,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitPlatform.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class PermissionServiceIT {
@@ -99,9 +96,9 @@ public class PermissionServiceIT {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
 
-        PermissionDO permission = response.readEntity(PermissionDO.class);
-
         assertEquals(200, response.getStatus());
+
+        PermissionDO permission = response.readEntity(PermissionDO.class);
         assertEquals("1f4c2b42-4408-4f99-b1aa-25002b85ea87", permission.getUuid());
     }
 

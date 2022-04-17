@@ -1,26 +1,15 @@
 package org.europa.together.domain.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.*;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.utils.StringUtils;
 import static org.hamcrest.MatcherAssert.assertThat;
-import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 @SuppressWarnings("unchecked")
-@RunWith(JUnitPlatform.class)
 public class LoginDOTest {
 
     private static final Logger LOGGER = new LogbackLogger(LoginDOTest.class);

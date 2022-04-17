@@ -75,7 +75,7 @@ public class Registration {
 
 //    @Path("/verify/{activationCode}")
     @API(status = STABLE, since = "1")
-    public void VerifyAccount(@PathParam("activationCode") String activationCode) throws DAOException {
+    public void verifyAccount(@PathParam("activationCode") String activationCode) throws DAOException {
         //TODO: DDOS Protection - more than XX Requests in 30 of the same IP or with
         // the same code needed to be blocked
 
