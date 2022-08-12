@@ -27,7 +27,7 @@ public class AccountDOTest {
     }
 
     @Test
-    void register() throws InterruptedException {
+    void regitsrationDate() throws InterruptedException {
         LOGGER.log("TEST CASE: register()", LogLevel.DEBUG);
 
         AccountDO account = new AccountDO("register");

@@ -11,6 +11,8 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.europa.together.utils.StringUtils;
 import org.europa.together.utils.Constraints;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,7 +23,7 @@ import org.hibernate.annotations.CreationTimestamp;
  * timezone.
  */
 @Entity
-@Table(name = "LOGIN",
+@Table(name = "ACL_LOGIN",
         //CHECKSTYLE:OFF
         indexes = {
             @Index(columnList = "EMAIL", name = "login_account_email")
@@ -36,7 +38,7 @@ public class LoginDO implements Serializable {
     /**
      * The name of the used database table for this domain object.
      */
-    public static final String TABLE_NAME = "LOGIN";
+    public static final String TABLE_NAME = "ACL_LOGIN";
 
     @Id
     @Column(name = "IDX")
@@ -48,9 +50,11 @@ public class LoginDO implements Serializable {
 
     @CreationTimestamp
     @Column(name = "LOGIN")
+    @Temporal(TemporalType.DATE)
     private Date login;
 
     @Column(name = "LOGOUT")
+    @Temporal(TemporalType.DATE)
     private Date logout;
 
     @Column(name = "IPADRESS")

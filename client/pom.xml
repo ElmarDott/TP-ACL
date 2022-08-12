@@ -23,34 +23,28 @@
     <properties>
         <skipUnitTests>false</skipUnitTests>
         <skipIntegrationTests>false</skipIntegrationTests>
-        <skipJarSigner>false</skipJarSigner>
-        <skipJavaDoc>false</skipJavaDoc>
-        <skipEnforcer>false</skipEnforcer>
-        <skipCoveralls>true</skipCoveralls>
-        <skipSwagger>true</skipSwagger>
+
+        <checkstyle.rules>${basedir}/../checkstyle.xml</checkstyle.rules>
+        <license.file>${basedir}/../src/site/resources/license.html</license.file>
     </properties>
 
     <build>
+        <filters>
+            <filter>${basedir}/../src/main/filters/database.properties</filter>
+        </filters>
+
         <resources>
             <resource>
-                <directory>src/main/resources/</directory>
+                <directory>${basedir}/../src/main/resources/</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <testResources>
             <testResource>
-                <directory>src/test/resources/</directory>
+                <directory>${basedir}/../src/test/resources/</directory>
+                <filtering>true</filtering>
             </testResource>
         </testResources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <configuration>
-                    <repoToken>${coveralls.token.tpAcl}</repoToken>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <dependencies>

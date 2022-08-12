@@ -2,7 +2,6 @@ package org.europa.together.service.acl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
-import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.persistence.NoResultException;
 import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.application.LogbackLogger;

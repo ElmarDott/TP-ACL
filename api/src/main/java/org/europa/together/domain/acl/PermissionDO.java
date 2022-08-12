@@ -14,7 +14,7 @@ import org.europa.together.utils.StringUtils;
  * PERMISSION OBJECT.
  */
 @Entity
-@Table(name = "PERMISSIONS",
+@Table(name = "ACL_PERMISSIONS",
         //CHECKSTYLE:OFF
         indexes = {
             @Index(columnList = "RESOURCE_RESOURCE", name = "resource_resource"),
@@ -35,7 +35,7 @@ public class PermissionDO implements Serializable {
     /**
      * The name of the used database table for this domain object.
      */
-    public static final String TABLE_NAME = "PERMISSIONS";
+    public static final String TABLE_NAME = "ACL_PERMISSIONS";
 
     @EmbeddedId
     private PermissionId permissionId;

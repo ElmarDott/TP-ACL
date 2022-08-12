@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ACL - Access Control List">
+<project name="ACL - API">
     <bannerLeft>
-        <name>together Platform</name>
-        <src>images/logo.gif</src>
+        <name>ACL - together platform</name>
+        <src>../../../site/images/logo.gif</src>
         <href>index.html</href>
     </bannerLeft>
     <body>
-        <menu ref="parent" />
         <menu name="Resources">
+            <item name="OWASP Dependency Check" href="dependency-check-report.html" target="_blank" />
             <item name="jaCoCo Report" href="jacoco/index.html" target="_blank" />
-            <item name="Java Doc - API" href="apidocs/index.html" target="_blank" />
-            <item name="GitHub Repository" href="https://github.com/ElmarDott/TP-ACL" target="_blank" />
-            <item name="Follow on Twitter" href="https://twitter.com/ElmarDott" target="_blank" />
+            <item name="Clover Report" href="clover/index.html" target="_blank" />
         </menu>
         <menu ref="reports" />
     </body>

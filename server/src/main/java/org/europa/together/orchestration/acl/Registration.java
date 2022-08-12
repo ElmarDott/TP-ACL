@@ -17,6 +17,7 @@ import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.Mail;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.exceptions.DAOException;
+import org.europa.together.service.MailClientService;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,11 @@ public class Registration {
 
     public Registration() {
         LOGGER.log("instance class", LogLevel.INFO);
+        // check if account not exist
+        // add new account (deactivate)
+        // send mail
+        // (verify) activate account by Mail Link
+        // resend activation Link
     }
 
     @Path("/register")
@@ -75,7 +81,7 @@ public class Registration {
 
 //    @Path("/verify/{activationCode}")
     @API(status = STABLE, since = "1")
-    public void verifyAccount(@PathParam("activationCode") String activationCode) throws DAOException {
+    public void verifyAccount(@PathParam("activationCode") String activationCode) {
         //TODO: DDOS Protection - more than XX Requests in 30 of the same IP or with
         // the same code needed to be blocked
 
@@ -102,14 +108,9 @@ public class Registration {
         mail.setMessage(content);
         mail.addRecipent(mailAdress);
 
-//        MailClientService postman = new MailClientService();
-//        postman.loadConfiguration(database);
-//        postman.sendEmail(mail);
+        MailClientService postman = new MailClientService();
+        postman.loadConfiguration();
+        postman.sendEmail(mail);
     }
 
-    // check if account not exist
-    // add new account (deactivate)
-    // send mail
-    // (verify) activate account by Mail Link
-    // resend activation Link
 }

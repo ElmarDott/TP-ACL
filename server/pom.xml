@@ -21,42 +21,33 @@
     <packaging>jar</packaging>
 
     <properties>
-        <skipUnitTests>false</skipUnitTests>
-        <skipIntegrationTests>true</skipIntegrationTests>
-        <skipJarSigner>false</skipJarSigner>
-        <skipJavaDoc>false</skipJavaDoc>
-        <skipEnforcer>false</skipEnforcer>
-        <skipCoveralls>true</skipCoveralls>
-        <skipSwagger>true</skipSwagger>
+        <skipUnitTests>true</skipUnitTests>
+        <skipIntegrationTests>false</skipIntegrationTests>
+        <skipSwagger>false</skipSwagger>
+
+        <checkstyle.rules>${basedir}/../checkstyle.xml</checkstyle.rules>
+        <license.file>${basedir}/../src/site/resources/license.html</license.file>
     </properties>
 
     <build>
         <filters>
-            <filter>src/main/filters/database.properties</filter>
+            <filter>${basedir}/../src/main/filters/database.properties</filter>
         </filters>
 
         <resources>
             <resource>
-                <directory>src/main/resources-filtered/</directory>
+                <directory>${basedir}/../src/main/resources/</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
         <testResources>
             <testResource>
-                <directory>src/test/resources-filtered/</directory>
+                <directory>${basedir}/../src/test/resources/</directory>
                 <filtering>true</filtering>
             </testResource>
         </testResources>
 
         <plugins>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <configuration>
-                    <repoToken>${coveralls.token.tpAcl}</repoToken>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
@@ -64,7 +55,7 @@
                     <resourcePackages>
                         <package>org.europa.together.service.acl</package>
                     </resourcePackages>
-                    <outputPath>${basedir}/src/main/resources-filtered/org/europa/together/configuration/acl</outputPath>
+                    <outputPath>${basedir}/../src/main/resources/org/europa/together/configuration/acl</outputPath>
                 </configuration>
             </plugin>
         </plugins>

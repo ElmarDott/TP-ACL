@@ -18,7 +18,7 @@ import javax.persistence.Table;
  * </ul>
  */
 @Entity
-@Table(name = "ROLES",
+@Table(name = "ACL_ROLES",
         //CHECKSTYLE:OFF
         indexes = {
             @Index(columnList = "NAME", name = "role_name")
@@ -33,7 +33,7 @@ public class RolesDO implements Serializable {
     /**
      * The name of the used database table for this domain object.
      */
-    public static final String TABLE_NAME = "ROLES";
+    public static final String TABLE_NAME = "ACL_ROLES";
 
     @Id
     @Column(name = "NAME")

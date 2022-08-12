@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 1.0
  */
 @Service
-@Path("/acl/" + Constraints.REST_API_VERSION + "/configuration")
+//@Path("/acl/" + Constraints.REST_API_VERSION + "/configuration")
 public class AclConfiguartionService {
 
     private static final Logger LOGGER = new LogbackLogger(AclConfiguartionService.class);

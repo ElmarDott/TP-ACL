@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ACL - Access Control List">
+    <bannerLeft>
+        <name>together Platform</name>
+        <src>images/logo.gif</src>
+        <href>index.html</href>
+    </bannerLeft>
+    <body>
+        <menu ref="parent" />
+        <menu name="Resources">
+            <item name="GitHub Repository" href="https://github.com/ElmarDott/TP-ACL" target="_blank" />
+            <item name="Follow on Twitter" href="https://twitter.com/ElmarDott" target="_blank" />
+        </menu>
+        <menu ref="reports" />
+    </body>
+</project>

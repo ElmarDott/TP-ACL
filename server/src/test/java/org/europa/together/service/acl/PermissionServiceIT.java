@@ -13,6 +13,8 @@ import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
+import org.europa.together.domain.acl.AccountDO;
+import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.PermissionId;
 import org.europa.together.domain.acl.ResourcesDO;
@@ -40,7 +42,11 @@ public class PermissionServiceIT {
     private static final Logger LOGGER = new LogbackLogger(ResourceServiceIT.class);
 
     private static final String FLUSH_TABLE
-            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+            = "TRUNCATE " + RolesDO.TABLE_NAME + ", "
+            + AccountDO.TABLE_NAME + ", "
+            + LoginDO.TABLE_NAME + ", "
+            + PermissionDO.TABLE_NAME + ", "
+            + ResourcesDO.TABLE_NAME + ";";
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
     private final String API_PATH

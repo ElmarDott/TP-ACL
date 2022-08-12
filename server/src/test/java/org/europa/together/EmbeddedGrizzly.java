@@ -11,7 +11,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class EmbeddedGrizzly {
 
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8888/";
+    public static final String BASE_URI = "http://localhost:8999/";
     public static final String BASE_PACKAGE = "org.europa.together";
 
     /**

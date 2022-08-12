@@ -11,6 +11,8 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.europa.together.utils.StringUtils;
 import org.europa.together.utils.Constraints;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +22,7 @@ import org.hibernate.annotations.CreationTimestamp;
  * in UTC format and need transformed to the client timezone.
  */
 @Entity
-@Table(name = "ACCOUNT",
+@Table(name = "ACL_ACCOUNT",
         //CHECKSTYLE:OFF
         indexes = {
             @Index(columnList = "EMAIL", name = "account_email"),
@@ -37,7 +39,7 @@ public class AccountDO implements Serializable {
     /**
      * The name of the used database table for this domain object.
      */
-    public static final String TABLE_NAME = "ACCOUNT";
+    public static final String TABLE_NAME = "ACL_ACCOUNT";
 
     @Id
     @Column(name = "EMAIL")
@@ -52,12 +54,15 @@ public class AccountDO implements Serializable {
 
     @CreationTimestamp
     @Column(name = "REGISTERED", nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date registered;
 
     @Column(name = "VERIFIED")
+    @Temporal(TemporalType.DATE)
     private Date verified;
 
     @Column(name = "DEACTIVATED")
+    @Temporal(TemporalType.DATE)
     private Date deactivated;
 
     @Column(name = "VERIFICATION_CODE", unique = true, nullable = false)

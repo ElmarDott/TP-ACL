@@ -25,7 +25,7 @@ public class ResourcesDOTest {
     }
 
     @Test
-    void testObjectIsEqual() {
+    void isEqual() {
         LOGGER.log("TEST CASE: objectIsEqual()", LogLevel.DEBUG);
 
         ResourcesDO first = new ResourcesDO("article");
@@ -35,7 +35,7 @@ public class ResourcesDOTest {
     }
 
     @Test
-    void testDomainObjectIsNotEqual() throws Exception {
+    void isNotEqual() throws Exception {
         LOGGER.log("TEST CASE: objectisNotEqual()", LogLevel.DEBUG);
 
         ResourcesDO first = new ResourcesDO("article");

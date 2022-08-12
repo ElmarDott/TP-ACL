@@ -1,7 +1,7 @@
 package org.europa.together.business.acl;
 
-import java.util.List;
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;

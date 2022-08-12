@@ -13,7 +13,7 @@ import javax.persistence.Table;
  * RESOURCES OBJECT.
  */
 @Entity
-@Table(name = "RESOURCES",
+@Table(name = "ACL_RESOURCES",
         //CHECKSTYLE:OFF
         indexes = {
             @Index(columnList = "RESOURCE", name = "resource_name"),
@@ -30,7 +30,7 @@ public class ResourcesDO implements Serializable {
     /**
      * The name of the used database table for this domain object.
      */
-    public static final String TABLE_NAME = "RESOURCES";
+    public static final String TABLE_NAME = "ACL_RESOURCES";
 
     @Id
     @Column(name = "RESOURCE")

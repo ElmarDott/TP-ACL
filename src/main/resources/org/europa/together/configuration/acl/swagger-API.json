@@ -1,0 +1,685 @@
+{
+  "openapi" : "3.0.1",
+  "paths" : {
+    "/acl/1/account" : {
+      "put" : {
+        "operationId" : "updateAccount",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AccountDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      },
+      "post" : {
+        "operationId" : "createAccount",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AccountDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/deactivate/{account}" : {
+      "put" : {
+        "operationId" : "deactivateAccount",
+        "parameters" : [ {
+          "name" : "account",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/{account}" : {
+      "get" : {
+        "operationId" : "fetchAccount",
+        "parameters" : [ {
+          "name" : "account",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "operationId" : "deleteAccount",
+        "parameters" : [ {
+          "name" : "account",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/list/{role}" : {
+      "get" : {
+        "operationId" : "fetchAccountsOfRole",
+        "parameters" : [ {
+          "name" : "role",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/list/activated" : {
+      "get" : {
+        "operationId" : "fetchActivatedAccount",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/list" : {
+      "get" : {
+        "operationId" : "fetchAllAccounts",
+        "parameters" : [ {
+          "name" : "account",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/list/deactivated" : {
+      "get" : {
+        "operationId" : "fetchDeactivatedAccount",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/list/logins/{account}" : {
+      "get" : {
+        "operationId" : "fetchLoginsOfAccount",
+        "parameters" : [ {
+          "name" : "account",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/list/not-confirmed" : {
+      "get" : {
+        "operationId" : "fetchNotConfirmedAccount",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/account/verify/{account}" : {
+      "put" : {
+        "operationId" : "verifyAccount",
+        "parameters" : [ {
+          "name" : "account",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/permission" : {
+      "put" : {
+        "operationId" : "updatePermission",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PermissionDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      },
+      "post" : {
+        "operationId" : "createPermission",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PermissionDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/permission/{id}" : {
+      "get" : {
+        "operationId" : "fetchPermission",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "operationId" : "deletePermission",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/permission/list" : {
+      "get" : {
+        "operationId" : "fetchAllPermissions",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/permission/list/forRole/{roleName}" : {
+      "get" : {
+        "operationId" : "fetchAllPermissionsOfARole",
+        "parameters" : [ {
+          "name" : "roleName",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/resource" : {
+      "put" : {
+        "operationId" : "updateResource",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ResourcesDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      },
+      "post" : {
+        "operationId" : "createResource",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ResourcesDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/resource/{resource}" : {
+      "get" : {
+        "operationId" : "fetchResource",
+        "parameters" : [ {
+          "name" : "resource",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "resourceView",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "operationId" : "deleteResource",
+        "parameters" : [ {
+          "name" : "resource",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "resourceView",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/resource/list" : {
+      "get" : {
+        "operationId" : "fetchAllResources",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/resource/list/protected" : {
+      "get" : {
+        "operationId" : "fetchProtectedResources",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/resource/list/equalType/{resource}" : {
+      "get" : {
+        "operationId" : "fetchResourceOfSameType",
+        "parameters" : [ {
+          "name" : "resource",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/role" : {
+      "put" : {
+        "operationId" : "updateRole",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RolesDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      },
+      "post" : {
+        "operationId" : "createRole",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RolesDO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/role/{role}" : {
+      "get" : {
+        "operationId" : "fetchRole",
+        "parameters" : [ {
+          "name" : "role",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "operationId" : "deleteRole",
+        "parameters" : [ {
+          "name" : "role",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/role/list" : {
+      "get" : {
+        "operationId" : "fetchAllRoles",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/acl/1/role/list/protected" : {
+      "get" : {
+        "operationId" : "fetchProtectedRoles",
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AccountDO" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "role" : {
+            "$ref" : "#/components/schemas/RolesDO"
+          },
+          "verificationCode" : {
+            "type" : "string"
+          },
+          "defaultLocale" : {
+            "type" : "string"
+          },
+          "defaultTimezone" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RolesDO" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "deleteable" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PermissionDO" : {
+        "type" : "object",
+        "properties" : {
+          "permissionId" : {
+            "$ref" : "#/components/schemas/PermissionId"
+          },
+          "uuid" : {
+            "type" : "string"
+          },
+          "read" : {
+            "type" : "boolean"
+          },
+          "create" : {
+            "type" : "boolean"
+          },
+          "change" : {
+            "type" : "boolean"
+          },
+          "delete" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PermissionId" : {
+        "type" : "object",
+        "properties" : {
+          "role" : {
+            "$ref" : "#/components/schemas/RolesDO"
+          },
+          "resource" : {
+            "$ref" : "#/components/schemas/ResourcesDO"
+          }
+        }
+      },
+      "ResourcesDO" : {
+        "type" : "object",
+        "properties" : {
+          "view" : {
+            "type" : "string"
+          },
+          "deleteable" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}
