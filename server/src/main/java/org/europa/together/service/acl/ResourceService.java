@@ -1,6 +1,5 @@
 package org.europa.together.service.acl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,6 +21,7 @@ import org.europa.together.business.acl.ResourcesDAO;
 import org.europa.together.domain.JpaPagination;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.ResourcesDO;
+import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.StringUtils;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,10 +9,10 @@ import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.LoginDAO;
-import org.europa.together.domain.JpaPagination;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.LoginDO;
+import org.europa.together.exceptions.DAOException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +49,8 @@ public class LoginHbmDAO extends GenericHbmDAO<LoginDO, String> implements Login
     }
 
     @Override
-    public void doLogout(final String account) {
+    public void doLogout(final String account)
+            throws DAOException {
         Date logout = new Date(System.currentTimeMillis());
         LoginDO login = getLoginsFromAccount(account).get(0);
         login.setLogout(logout);

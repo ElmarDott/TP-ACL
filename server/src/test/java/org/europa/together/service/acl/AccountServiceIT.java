@@ -1,7 +1,5 @@
 package org.europa.together.service.acl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -10,9 +8,11 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.europa.together.EmbeddedGrizzly;
+import org.europa.together.application.JacksonJsonTools;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
+import org.europa.together.business.JsonTools;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
@@ -105,8 +105,9 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        AccountDO object = mapper.readValue(response.readEntity(String.class), AccountDO.class);
+        JsonTools<AccountDO> json = new JacksonJsonTools<>();
+        AccountDO object = json.deserializeJsonAsObject(
+                response.readEntity(String.class), AccountDO.class);
         assertEquals("admin@sample.org", object.getEmail());
     }
 
@@ -149,9 +150,10 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
-        assertEquals(6, list.length);
+        JsonTools<AccountDO> json = new JacksonJsonTools<>();
+        List<AccountDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(6, list.size());
     }
 
     @Test
@@ -166,9 +168,10 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        LoginDO[] list = mapper.readValue(response.readEntity(String.class), LoginDO[].class);
-        assertEquals(3, list.length);
+        JsonTools<LoginDO> json = new JacksonJsonTools<>();
+        List<LoginDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(3, list.size());
     }
 
     @Test
@@ -183,9 +186,9 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        List<AccountDO> list = mapper.readValue(response.readEntity(String.class), new TypeReference<List<AccountDO>>() {
-        });
+        JsonTools<AccountDO> json = new JacksonJsonTools<>();
+        List<AccountDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
         assertEquals(3, list.size());
     }
 
@@ -201,9 +204,10 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
-        assertEquals(3, list.length);
+        JsonTools<AccountDO> json = new JacksonJsonTools<>();
+        List<AccountDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(3, list.size());
     }
 
     @Test
@@ -218,9 +222,10 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
-        assertEquals(1, list.length);
+        JsonTools<AccountDO> json = new JacksonJsonTools<>();
+        List<AccountDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(1, list.size());
     }
 
     @Test
@@ -235,9 +240,10 @@ public class AccountServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        AccountDO[] list = mapper.readValue(response.readEntity(String.class), AccountDO[].class);
-        assertEquals(3, list.length);
+        JsonTools<AccountDO> json = new JacksonJsonTools<>();
+        List<AccountDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(3, list.size());
     }
 
     @Test

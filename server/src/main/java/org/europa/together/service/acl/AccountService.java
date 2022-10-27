@@ -1,6 +1,5 @@
 package org.europa.together.service.acl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,6 +23,7 @@ import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.domain.acl.RolesDO;
+import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,10 +43,8 @@ public class AccountService {
 
     @Autowired
     private AccountDAO accountDAO;
-
     @Autowired
     private LoginDAO loginDAO;
-
     @Autowired
     private RolesDAO rolesDAO;
 
@@ -138,7 +136,7 @@ public class AccountService {
             String exception = ex.getClass().getSimpleName();
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
-            if (exception.equals("EntityNotFoundException")) {
+            if (exception.equals("DAOException")) {
                 status = Response.Status.NOT_FOUND;
             }
 
@@ -183,7 +181,7 @@ public class AccountService {
             String exception = ex.getClass().getSimpleName();
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
-            if (exception.equals("EntityNotFoundException")) {
+            if (exception.equals("DAOException")) {
                 status = Response.Status.NOT_FOUND;
             }
             if (exception.equals("DataIntegrityViolationException")) {

@@ -5,6 +5,7 @@ import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;
 import org.europa.together.domain.acl.LoginDO;
+import org.europa.together.exceptions.DAOException;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -34,8 +35,8 @@ public interface LoginDAO extends GenericDAO<LoginDO, String> {
      * logout means, that the logout timestamp will set to the datarow.
      *
      * @param account as String
-     * @throws org.europa.together.exceptions.DAOException in case of failure
+     * @throws org.europa.together.exceptions.DAOException
      */
     @API(status = STABLE, since = "1.0")
-    void doLogout(String account);
+    void doLogout(String account) throws DAOException;
 }

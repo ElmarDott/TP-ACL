@@ -8,7 +8,11 @@ import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.ResourcesDAO;
 import org.europa.together.domain.LogLevel;
+import org.europa.together.domain.acl.AccountDO;
+import org.europa.together.domain.acl.LoginDO;
+import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.ResourcesDO;
+import org.europa.together.domain.acl.RolesDO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -30,14 +34,17 @@ public class ResourcesHbmDAOTest {
 
     private static final Logger LOGGER = new LogbackLogger(ResourcesHbmDAO.class);
     private static final String FLUSH_TABLE
-            = "TRUNCATE ROLES, ACCOUNT, LOGIN, PERMISSIONS, RESOURCES;";
+            = "TRUNCATE " + RolesDO.TABLE_NAME + ", "
+            + AccountDO.TABLE_NAME + ", "
+            + LoginDO.TABLE_NAME + ", "
+            + PermissionDO.TABLE_NAME + ", "
+            + ResourcesDO.TABLE_NAME + ";";
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
+    private static DatabaseActions jdbcActions = new JdbcActions();
 
     @Autowired
     private ResourcesDAO resourcesDAO;
-
-    private static DatabaseActions jdbcActions = new JdbcActions();
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll

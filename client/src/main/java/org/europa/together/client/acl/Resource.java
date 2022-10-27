@@ -1,9 +1,6 @@
 package org.europa.together.client.acl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -12,11 +9,14 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.europa.together.application.LogbackLogger;
+import org.europa.together.business.JsonTools;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.ResourcesDO;
+import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.acl.Constraints;
 import org.glassfish.jersey.client.ClientConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author https://elmar-dott.com
@@ -28,9 +28,11 @@ public class Resource {
             = "/acl/" + Constraints.REST_API_VERSION + "/resource";
     private WebTarget target;
 
+    @Autowired
+    private JsonTools<ResourcesDO> jsonTools;
+
     public Resource(String baseURI) {
         LOGGER.log("instance class", LogLevel.INFO);
-
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
         target = client.target(baseURI);
@@ -38,17 +40,16 @@ public class Resource {
                 + " Path: " + API_PATH, LogLevel.INFO);
     }
 
-    public ResourcesDO getResource(String resource) throws JsonProcessingException {
-
+    public ResourcesDO getResource(String resource)
+            throws JsonProcessingException, ClassNotFoundException {
         Response response = target
                 .path(API_PATH).path(resource)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
         LOGGER.log("(get) HTTP STATUS CODE: " + response.getStatus(), LogLevel.INFO);
-
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.readEntity(String.class), ResourcesDO.class);
+        return jsonTools
+                .deserializeJsonAsObject(response.readEntity(String.class), ResourcesDO.class);
     }
 
     public void createResource(ResourcesDO resource) {
@@ -76,7 +77,8 @@ public class Resource {
         LOGGER.log("(delete) HTTP STATUS CODE: " + response.getStatus(), LogLevel.INFO);
     }
 
-    public List<ResourcesDO> listResources() throws JsonProcessingException {
+    public List<ResourcesDO> listResources()
+            throws JsonProcessingException, ClassNotFoundException {
         List<ResourcesDO> resources = new ArrayList<>();
         Response response = target
                 .path(API_PATH).path("/list")
@@ -84,10 +86,8 @@ public class Resource {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
         LOGGER.log("(list) HTTP STATUS CODE: " + response.getStatus(), LogLevel.INFO);
-
-        ObjectMapper mapper = new ObjectMapper();
-        ResourcesDO[] result = mapper.readValue(response.readEntity(String.class), ResourcesDO[].class);
-        resources = Arrays.asList(result);
+        resources = jsonTools
+                .deserializeJsonAsList(response.readEntity(String.class));
         return resources;
     }
 }

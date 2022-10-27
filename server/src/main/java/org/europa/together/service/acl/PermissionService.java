@@ -1,6 +1,5 @@
 package org.europa.together.service.acl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,6 +22,7 @@ import org.europa.together.domain.JpaPagination;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.PermissionId;
+import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,10 +42,8 @@ public class PermissionService {
 
     @Autowired
     private PermissionDAO permissionDAO;
-
     @Autowired
     private RolesDAO rolesDAO;
-
     @Autowired
     private ResourcesDAO resourcesDAO;
 
@@ -148,7 +146,7 @@ public class PermissionService {
             String exception = ex.getClass().getSimpleName();
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
-            if (exception.equals("EntityNotFoundException")) {
+            if (exception.equals("DAOException")) {
                 status = Response.Status.NOT_FOUND;
             }
 

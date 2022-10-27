@@ -1,9 +1,7 @@
 package org.europa.together.service.acl;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import org.europa.together.domain.LogLevel;
-import org.europa.together.utils.acl.Constraints;
 import org.springframework.stereotype.Service;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.ConfigurationDAO;

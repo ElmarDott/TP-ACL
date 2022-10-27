@@ -1,6 +1,6 @@
 package org.europa.together.service.acl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -8,9 +8,11 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.europa.together.EmbeddedGrizzly;
+import org.europa.together.application.JacksonJsonTools;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
+import org.europa.together.business.JsonTools;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
@@ -104,7 +106,9 @@ public class PermissionServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        PermissionDO permission = response.readEntity(PermissionDO.class);
+        JsonTools<PermissionDO> json = new JacksonJsonTools<>();
+        PermissionDO permission = json.deserializeJsonAsObject(
+                response.readEntity(String.class), PermissionDO.class);
         assertEquals("1f4c2b42-4408-4f99-b1aa-25002b85ea87", permission.getUuid());
     }
 
@@ -160,9 +164,10 @@ public class PermissionServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        PermissionDO[] list = mapper.readValue(response.readEntity(String.class), PermissionDO[].class);
-        assertEquals(2, list.length);
+        JsonTools<PermissionDO> json = new JacksonJsonTools<>();
+        List<PermissionDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(2, list.size());
     }
 
     @Test

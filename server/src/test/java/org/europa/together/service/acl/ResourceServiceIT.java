@@ -1,6 +1,6 @@
 package org.europa.together.service.acl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -8,9 +8,11 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.europa.together.EmbeddedGrizzly;
+import org.europa.together.application.JacksonJsonTools;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
+import org.europa.together.business.JsonTools;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
@@ -103,8 +105,9 @@ public class ResourceServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        ResourcesDO object = mapper.readValue(response.readEntity(String.class), ResourcesDO.class);
+        JsonTools<ResourcesDO> json = new JacksonJsonTools<>();
+        ResourcesDO object = json.deserializeJsonAsObject(
+                response.readEntity(String.class), ResourcesDO.class);
         assertEquals("Articledefault", object.getName() + object.getView());
     }
 
@@ -120,8 +123,9 @@ public class ResourceServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        ResourcesDO object = mapper.readValue(response.readEntity(String.class), ResourcesDO.class);
+        JsonTools<ResourcesDO> json = new JacksonJsonTools<>();
+        ResourcesDO object = json.deserializeJsonAsObject(
+                response.readEntity(String.class), ResourcesDO.class);
         assertEquals("Articleteaser", object.getName() + object.getView());
     }
 
@@ -177,9 +181,10 @@ public class ResourceServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        ResourcesDO[] list = mapper.readValue(response.readEntity(String.class), ResourcesDO[].class);
-        assertEquals(2, list.length);
+        JsonTools<ResourcesDO> json = new JacksonJsonTools<>();
+        List<ResourcesDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(2, list.size());
     }
 
     @Test
@@ -206,9 +211,10 @@ public class ResourceServiceIT {
 
         assertEquals(200, response.getStatus());
 
-        ObjectMapper mapper = new ObjectMapper();
-        ResourcesDO[] list = mapper.readValue(response.readEntity(String.class), ResourcesDO[].class);
-        assertEquals(3, list.length);
+        JsonTools<ResourcesDO> json = new JacksonJsonTools<>();
+        List<ResourcesDO> list = json.deserializeJsonAsList(
+                response.readEntity(String.class));
+        assertEquals(3, list.size());
     }
 
     @Test

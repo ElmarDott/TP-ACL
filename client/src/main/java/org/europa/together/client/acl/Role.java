@@ -1,6 +1,5 @@
 package org.europa.together.client.acl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -12,11 +11,15 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.europa.together.application.LogbackLogger;
+import org.europa.together.business.JsonTools;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
+import org.europa.together.domain.acl.ResourcesDO;
 import org.europa.together.domain.acl.RolesDO;
+import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.acl.Constraints;
 import org.glassfish.jersey.client.ClientConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author https://elmar-dott.com
@@ -28,6 +31,9 @@ public class Role {
             = "/acl/" + Constraints.REST_API_VERSION + "/role";
     private WebTarget target;
 
+    @Autowired
+    private JsonTools<RolesDO> jsonTools;
+
     public Role(String baseURI) {
         LOGGER.log("instance class", LogLevel.INFO);
 
@@ -38,17 +44,16 @@ public class Role {
                 + " Path: " + API_PATH, LogLevel.INFO);
     }
 
-    public RolesDO getRole(String role) throws JsonProcessingException {
-
+    public RolesDO getRole(String role)
+            throws JsonProcessingException, ClassNotFoundException {
         Response response = target
                 .path(API_PATH).path(role)
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
         LOGGER.log("(get) HTTP STATUS CODE: " + response.getStatus(), LogLevel.INFO);
-
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.readEntity(String.class), RolesDO.class);
+        return jsonTools
+                .deserializeJsonAsObject(response.readEntity(String.class), RolesDO.class);
     }
 
     public void createRole(RolesDO role) {
@@ -75,7 +80,8 @@ public class Role {
         LOGGER.log("(delete) HTTP STATUS CODE: " + response.getStatus(), LogLevel.INFO);
     }
 
-    public List<RolesDO> listRoles() throws JsonProcessingException {
+    public List<RolesDO> listRoles()
+            throws JsonProcessingException, ClassNotFoundException {
         List<RolesDO> roles = new ArrayList<>();
         Response response = target
                 .path(API_PATH).path("/list")
@@ -83,10 +89,8 @@ public class Role {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(Response.class);
         LOGGER.log("(list) HTTP STATUS CODE: " + response.getStatus(), LogLevel.INFO);
-
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.readEntity(String.class),
-                new TypeReference<List<RolesDO>>() {
-        });
+        roles = jsonTools
+                .deserializeJsonAsList(response.readEntity(String.class));
+        return roles;
     }
 }

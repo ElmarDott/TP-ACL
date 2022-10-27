@@ -69,11 +69,13 @@ public final class Constraints {
     /* ###################################################################### */
     private static String getAppInfo(final String propertyName) {
         PropertyReader propertyReader = new PropertyFileReader();
+        String value = "";
         try {
             propertyReader.appendPropertiesFromClasspath(FILE);
-        } catch (IOException ex) {
+            value = propertyReader.getPropertyAsString(propertyName);
+        } catch (Exception ex) {
             LOGGER.catchException(ex);
         }
-        return propertyReader.getPropertyAsString(propertyName);
+        return value;
     }
 }

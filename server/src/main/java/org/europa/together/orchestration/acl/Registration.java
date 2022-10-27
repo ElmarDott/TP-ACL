@@ -1,7 +1,7 @@
 package org.europa.together.orchestration.acl;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -81,7 +81,7 @@ public class Registration {
 
 //    @Path("/verify/{activationCode}")
     @API(status = STABLE, since = "1")
-    public void verifyAccount(@PathParam("activationCode") String activationCode) {
+    public void verifyAccount(@PathParam("activationCode") String activationCode) throws DAOException {
         //TODO: DDOS Protection - more than XX Requests in 30 of the same IP or with
         // the same code needed to be blocked
 
