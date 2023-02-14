@@ -17,8 +17,8 @@ import org.europa.together.utils.StringUtils;
 @Table(name = "ACL_PERMISSIONS",
         //CHECKSTYLE:OFF
         indexes = {
-            @Index(columnList = "RESOURCE_RESOURCE", name = "resource_resource"),
-            @Index(columnList = "RESOURCE_TEMPLATE", name = "resource_template"),
+            @Index(columnList = "RESOURCE_RESOURCE", name = "acl_resource_resource"),
+            @Index(columnList = "RESOURCE_TEMPLATE", name = "acl_resource_template"),
             @Index(columnList = "ROLE_NAME", name = "role_name")
         },
         //CHECKSTYLE:ON

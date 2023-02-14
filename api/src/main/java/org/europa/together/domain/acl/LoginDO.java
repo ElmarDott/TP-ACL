@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -26,7 +25,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "ACL_LOGIN",
         //CHECKSTYLE:OFF
         indexes = {
-            @Index(columnList = "EMAIL", name = "login_account_email")
+            @Index(columnList = "EMAIL", name = "acl_login_account_email")
         }
 //CHECKSTYLE:ON
 )
@@ -45,7 +44,7 @@ public class LoginDO implements Serializable {
     private String uuid;
 
     @ManyToOne
-    @JoinColumn(name = "EMAIL", nullable = false)
+//    @JoinColumn(name = "PROFILE_ID", nullable = false)
     private AccountDO account;
 
     @CreationTimestamp

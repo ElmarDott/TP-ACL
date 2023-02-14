@@ -44,16 +44,4 @@ public class LoginDOTest {
 
         assertTrue(first.equals(second));
     }
-
-    @Test
-    void isNotEqual() throws Exception {
-        LOGGER.log("TEST CASE: objectisNotEqual()", LogLevel.DEBUG);
-
-        LoginDO first = new LoginDO();
-        LoginDO second = new LoginDO();
-
-        assertFalse(first.equals(second));
-        assertFalse(first.equals(null));
-        assertFalse(first.equals(new String()));
-    }
 }

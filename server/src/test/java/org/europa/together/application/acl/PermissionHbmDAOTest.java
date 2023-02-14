@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,14 +86,12 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-//    @Disabled
     void constructor() {
         LOGGER.log("TEST CASE: constructor", LogLevel.DEBUG);
         assertThat(PermissionHbmDAO.class, hasValidBeanConstructor());
     }
 
     @Test
-//    @Disabled
     void findPermission() {
         LOGGER.log("TEST CASE: findPermission", LogLevel.DEBUG);
 
@@ -114,7 +111,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void findPermissionById() {
         LOGGER.log("TEST CASE: findPermissionById", LogLevel.DEBUG);
 
@@ -137,7 +133,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void createPermission() throws Exception {
         LOGGER.log("TEST CASE: createPermission", LogLevel.DEBUG);
 
@@ -150,7 +145,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void createEqualPermissionForDifferentUser() throws Exception {
         LOGGER.log("TEST CASE: createEqualPermissionForDifferentUser", LogLevel.DEBUG);
 
@@ -167,7 +161,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void failDuplicateEntry() throws Exception {
         LOGGER.log("TEST CASE: failDuplicateEntry", LogLevel.DEBUG);
 
@@ -186,7 +179,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void deletePermission() throws Exception {
         LOGGER.log("TEST CASE: deletePermission", LogLevel.DEBUG);
 
@@ -196,7 +188,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void updatePermission() throws Exception {
         LOGGER.log("TEST CASE: updatePermission", LogLevel.DEBUG);
 
@@ -209,7 +200,6 @@ public class PermissionHbmDAOTest {
     }
 
     @Test
-    @Disabled
     void listRolesOfPermission() {
         LOGGER.log("TEST CASE: listRolesOfPermission", LogLevel.DEBUG);
 

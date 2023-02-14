@@ -25,9 +25,9 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "ACL_ACCOUNT",
         //CHECKSTYLE:OFF
         indexes = {
-            @Index(columnList = "EMAIL", name = "account_email"),
-            @Index(columnList = "ROLE_NAME", name = "account_role"),
-            @Index(columnList = "VERIFICATION_CODE", name = "account_verification")
+            @Index(columnList = "EMAIL", name = "acl_account_email"),
+            @Index(columnList = "ROLE_NAME", name = "acl_account_role"),
+            @Index(columnList = "VERIFICATION_CODE", name = "acl_account_verification")
         }
 //CHECKSTYLE:ON
 )

@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name = "ACL_ROLES",
         //CHECKSTYLE:OFF
         indexes = {
-            @Index(columnList = "NAME", name = "role_name")
+            @Index(columnList = "NAME", name = "acl_role_name")
         }
 //CHECKSTYLE:ON
 )

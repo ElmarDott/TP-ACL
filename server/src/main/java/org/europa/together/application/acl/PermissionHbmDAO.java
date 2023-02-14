@@ -1,8 +1,10 @@
 package org.europa.together.application.acl;
 
 import java.util.List;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
@@ -36,13 +38,21 @@ public class PermissionHbmDAO extends GenericHbmDAO<PermissionDO, PermissionId>
 
     @Override
     public PermissionDO find(final String permissionId) {
+        PermissionDO entry;
         CriteriaBuilder builder = mainEntityManagerFactory.getCriteriaBuilder();
         CriteriaQuery<PermissionDO> query = builder.createQuery(PermissionDO.class);
+        //Criteria SQL Parameters
+        ParameterExpression<String> paramPermissionId = builder.parameter(String.class);
         // create Criteria
         Root<PermissionDO> root = query.from(PermissionDO.class);
-        query.where(builder.equal(root.get("uuid"), permissionId));
+        //Prevent SQL Injections
+        query.where(builder.equal(root.get("uuid"), paramPermissionId));
+        // wire queries together with parameters
+        TypedQuery<PermissionDO> result = mainEntityManagerFactory.createQuery(query);
+        result.setParameter(paramPermissionId, permissionId);
 
-        return mainEntityManagerFactory.createQuery(query).getSingleResult();
+        entry = result.getSingleResult();
+        return entry;
     }
 
     @Override

@@ -2,13 +2,16 @@ package org.europa.together.application.acl;
 
 import java.sql.Timestamp;
 import java.util.List;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.AccountDAO;
+import org.europa.together.domain.ConfigurationDO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.RolesDO;
@@ -35,12 +38,21 @@ public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements A
 
     @Override
     public AccountDO findAccountByVerificationCode(final String verificationCode) {
+        AccountDO entry;
         CriteriaBuilder builder = mainEntityManagerFactory.getCriteriaBuilder();
         CriteriaQuery<AccountDO> query = builder.createQuery(AccountDO.class);
         // create Criteria
         Root<AccountDO> root = query.from(AccountDO.class);
-        query.where(builder.equal(root.get("verificationCode"), verificationCode));
-        return mainEntityManagerFactory.createQuery(query).getSingleResult();
+        //Criteria SQL Parameters
+        ParameterExpression<String> paramVerificationCode = builder.parameter(String.class);
+        //Prevent SQL Injections
+        query.where(builder.equal(root.get("verificationCode"), paramVerificationCode));
+        // wire queries tog parametersether with parameters
+        TypedQuery<AccountDO> result = mainEntityManagerFactory.createQuery(query);
+        result.setParameter(paramVerificationCode, verificationCode);
+
+        entry = result.getSingleResult();
+        return entry;
     }
 
     @Override

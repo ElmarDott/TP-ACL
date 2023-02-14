@@ -1,6 +1,5 @@
 package org.europa.together.utils.acl;
 
-import java.io.IOException;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.application.PropertyFileReader;
 import org.europa.together.business.Logger;

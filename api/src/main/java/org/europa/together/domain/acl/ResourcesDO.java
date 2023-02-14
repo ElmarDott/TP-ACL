@@ -16,8 +16,8 @@ import javax.persistence.Table;
 @Table(name = "ACL_RESOURCES",
         //CHECKSTYLE:OFF
         indexes = {
-            @Index(columnList = "RESOURCE", name = "resource_name"),
-            @Index(columnList = "TEMPLATE", name = "template_view")
+            @Index(columnList = "RESOURCE", name = "acl_resource_name"),
+            @Index(columnList = "TEMPLATE", name = "acl_template_view")
         }
 //CHECKSTYLE:ON
 )

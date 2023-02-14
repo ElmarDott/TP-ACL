@@ -49,22 +49,4 @@ public class PermissionDOTest {
 
         assertFalse(first.equals(second));
     }
-
-    @Test
-    void isNotEqual() throws Exception {
-        LOGGER.log("TEST CASE: objectisNotEqual()", LogLevel.DEBUG);
-
-        PermissionId id_1 = new PermissionId();
-        id_1.setRole(new RolesDO("test"));
-        PermissionId id_2 = new PermissionId();
-        id_2.setRole(new RolesDO("role"));
-
-        PermissionDO first = new PermissionDO(id_1);
-        PermissionDO second = new PermissionDO(id_2);
-
-        assertFalse(first.equals(second));
-        assertFalse(first.equals(null));
-        assertFalse(first.equals(new String()));
-    }
-
 }

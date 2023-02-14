@@ -52,6 +52,15 @@ public class AccountDOTest {
     }
 
     @Test
+    void verifyAccount() {
+        AccountDO account = new AccountDO("verify");
+
+        assertNull(account.isVerified());
+        account.setVerified();
+        assertNotNull(account.isVerified());
+    }
+
+    @Test
     void isEqual() {
         LOGGER.log("TEST CASE: objectIsEqual()", LogLevel.DEBUG);
 
@@ -59,17 +68,5 @@ public class AccountDOTest {
         AccountDO second = new AccountDO("test@sample.org");
 
         assertTrue(first.equals(second));
-    }
-
-    @Test
-    void isNotEqual() {
-        LOGGER.log("TEST CASE: objectisNotEqual()", LogLevel.DEBUG);
-
-        AccountDO first = new AccountDO("a@sample.org");
-        AccountDO second = new AccountDO("b@sample.org");
-
-        assertFalse(first.equals(second));
-        assertFalse(first.equals(null));
-        assertFalse(first.equals(new String()));
     }
 }

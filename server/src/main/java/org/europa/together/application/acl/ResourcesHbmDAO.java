@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
@@ -56,13 +58,24 @@ public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String> implemen
     @Override
     @Transactional(readOnly = true)
     public ResourcesDO find(final String resource, final String view) {
+        ResourcesDO entry;
         CriteriaBuilder builder = mainEntityManagerFactory.getCriteriaBuilder();
         CriteriaQuery<ResourcesDO> query = builder.createQuery(ResourcesDO.class);
         // create Criteria
         Root<ResourcesDO> root = query.from(ResourcesDO.class);
-        query.where(builder.equal(root.get("resourceName"), resource),
-                builder.equal(root.get("view"), view));
-        return mainEntityManagerFactory.createQuery(query).getSingleResult();
+        //Criteria SQL Parameters
+        ParameterExpression<String> paramResource = builder.parameter(String.class);
+        ParameterExpression<String> paramView = builder.parameter(String.class);
+        //Prevent SQL Injections
+        query.where(builder.equal(root.get("resourceName"), paramResource),
+                builder.equal(root.get("view"), paramView));
+        // wire queries together with parameters
+        TypedQuery<ResourcesDO> result = mainEntityManagerFactory.createQuery(query);
+        result.setParameter(paramResource, resource);
+        result.setParameter(paramView, view);
+
+        entry = result.getSingleResult();
+        return entry;
     }
 
     @Override
