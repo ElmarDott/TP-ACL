@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -44,7 +45,7 @@ public class LoginDO implements Serializable {
     private String uuid;
 
     @ManyToOne
-//    @JoinColumn(name = "PROFILE_ID", nullable = false)
+    @JoinColumn(name = "EMAIL", nullable = false)
     private AccountDO account;
 
     @CreationTimestamp

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-@Path("acl/" + Constraints.REST_API_VERSION + "/")
+@Path("acl/" + Constraints.REST_API_VERSION)
 public class Registration {
 
     private static final Logger LOGGER = new LogbackLogger(Registration.class);

@@ -61,7 +61,7 @@ public class PermissionServiceIT {
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        Assumptions.assumeTrue(jdbcActions.connect("test"));
+        Assumptions.assumeTrue(jdbcActions.connect("test"), "JDBC DBMS Connection failed.");
 
         try {
             server = EmbeddedGrizzly.startServer();
@@ -71,15 +71,12 @@ public class PermissionServiceIT {
         } catch (Exception ex) {
             LOGGER.catchException(ex);
         }
-        Assumptions.assumeTrue(server.isStarted());
-
-        LOGGER.log("### TEST SUITE INICIATED.", LogLevel.TRACE);
+        Assumptions.assumeTrue(server.isStarted(), "Starting Grizzly Server failed.");
     }
 
     @AfterAll
     static void tearDown() {
         server.shutdownNow();
-        LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
 
     @BeforeEach
@@ -90,7 +87,6 @@ public class PermissionServiceIT {
     @AfterEach
     void testCaseTermination() throws Exception {
         jdbcActions.executeQuery(FLUSH_TABLE);
-        LOGGER.log("TEST CASE TERMINATED.", LogLevel.TRACE);
     }
     //</editor-fold>
 
