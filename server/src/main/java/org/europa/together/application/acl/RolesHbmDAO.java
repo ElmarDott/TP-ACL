@@ -3,7 +3,7 @@ package org.europa.together.application.acl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;

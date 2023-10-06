@@ -1,6 +1,7 @@
 package org.europa.together.application.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
+import java.sql.SQLException;
 import java.util.List;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
@@ -36,11 +37,13 @@ public class PermissionHbmDAOTest {
 
     private static final Logger LOGGER = new LogbackLogger(PermissionHbmDAO.class);
     private static final String FLUSH_TABLE
-            = "TRUNCATE " + RolesDO.TABLE_NAME + ", "
+            = "TRUNCATE "
+            + RolesDO.TABLE_NAME + ", "
             + AccountDO.TABLE_NAME + ", "
             + LoginDO.TABLE_NAME + ", "
             + PermissionDO.TABLE_NAME + ", "
-            + ResourcesDO.TABLE_NAME + ";";
+            + ResourcesDO.TABLE_NAME
+            + " CASCADE;";
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
     private static DatabaseActions jdbcActions = new JdbcActions();
@@ -57,7 +60,7 @@ public class PermissionHbmDAOTest {
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws Exception {
         Assumptions.assumeTrue(jdbcActions.connect("test"), "JDBC DBMS Connection failed.");
         jdbcActions.executeSqlFromClasspath(FILE);
     }

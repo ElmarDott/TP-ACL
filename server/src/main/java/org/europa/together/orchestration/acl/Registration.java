@@ -2,11 +2,11 @@ package org.europa.together.orchestration.acl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.AddressException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.application.LogbackLogger;

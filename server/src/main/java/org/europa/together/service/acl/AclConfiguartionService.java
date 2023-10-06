@@ -1,6 +1,6 @@
 package org.europa.together.service.acl;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.europa.together.domain.LogLevel;
 import org.springframework.stereotype.Service;
 import org.europa.together.application.LogbackLogger;

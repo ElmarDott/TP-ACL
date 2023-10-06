@@ -1,6 +1,6 @@
 package org.europa.together.business.acl;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;

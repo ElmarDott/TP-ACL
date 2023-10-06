@@ -1,12 +1,12 @@
 package org.europa.together.service.acl;
 
 import java.util.List;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.europa.together.EmbeddedGrizzly;
 import org.europa.together.application.JacksonJsonTools;
 import org.europa.together.application.JdbcActions;
@@ -60,7 +60,7 @@ public class RoleServiceIT {
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        Assumptions.assumeTrue(jdbcActions.connect("test"), "JDBC DBMS Connection faild.");
+        Assumptions.assumeTrue(jdbcActions.connect("test"), "JDBC DBMS Connection failed.");
 
         try {
             server = EmbeddedGrizzly.startServer();

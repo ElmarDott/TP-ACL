@@ -2,9 +2,9 @@ package org.europa.together.application.acl;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;

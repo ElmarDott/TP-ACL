@@ -1,11 +1,11 @@
 package org.europa.together.domain.acl;
 
 import java.io.Serializable;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 /**
  * ID CLASS for a permission to map a resource to a role.

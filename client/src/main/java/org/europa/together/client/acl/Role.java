@@ -1,20 +1,17 @@
 package org.europa.together.client.acl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.JsonTools;
 import org.europa.together.business.Logger;
 import org.europa.together.domain.LogLevel;
-import org.europa.together.domain.acl.ResourcesDO;
 import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.acl.Constraints;

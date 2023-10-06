@@ -37,7 +37,8 @@ public class RolesHbmDAOTest {
             + AccountDO.TABLE_NAME + ", "
             + LoginDO.TABLE_NAME + ", "
             + PermissionDO.TABLE_NAME + ", "
-            + ResourcesDO.TABLE_NAME + ";";
+            + ResourcesDO.TABLE_NAME
+            + " CASCADE;";
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
     private static DatabaseActions jdbcActions = new JdbcActions();

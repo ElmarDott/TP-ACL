@@ -52,33 +52,41 @@
         <url><![CDATA[https://github.com/ElmarDott/TP-ACL/issues?sort=created&direction=desc&state=open]]></url>
     </issueManagement>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- require Spring Framework 6.0 or above -->
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>6.1.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.github.together.modules</groupId>
             <artifactId>core</artifactId>
-            <version>3.0.0</version>
+            <version>3.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>6.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>6.0.1</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>6.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>6.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

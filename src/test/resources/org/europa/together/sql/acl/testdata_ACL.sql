@@ -1,8 +1,6 @@
 -- #### #######################################################################
 -- ####                POPULATE ACL
 -- #### #######################################################################
---- EMPTY TABLES
-TRUNCATE ACL_ROLES, ACL_ACCOUNT, ACL_LOGIN, ACL_PERMISSIONS, ACL_RESOURCES;
 
 --- RESOURCE
 INSERT INTO ACL_RESOURCES (RESOURCE, TEMPLATE, DELETEABLE) VALUES ('Document', 'default', false);
