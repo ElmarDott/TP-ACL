@@ -8,6 +8,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.europa.together.EmbeddedGrizzly;
+import org.europa.together.JUnit5Preperator;
 import org.europa.together.application.JacksonJsonTools;
 import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
@@ -37,7 +38,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, JUnit5Preperator.class})
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class PermissionServiceIT {
 
@@ -54,14 +55,15 @@ public class PermissionServiceIT {
     private final String API_PATH
             = "/acl/" + Constraints.REST_API_VERSION + "/permission";
 
-    private static DatabaseActions jdbcActions = new JdbcActions();
+    private static DatabaseActions jdbcActions
+            = JUnit5Preperator.JDBC_CONNECTION;
     private static HttpServer server;
     private static WebTarget target;
 
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        Assumptions.assumeTrue(jdbcActions.connect("test"), "JDBC DBMS Connection failed.");
+        Assumptions.assumeTrue(JUnit5Preperator.isConnected(), "JDBC DBMS Connection failed.");
 
         try {
             server = EmbeddedGrizzly.startServer();

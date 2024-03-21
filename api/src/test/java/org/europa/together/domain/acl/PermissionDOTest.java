@@ -7,6 +7,7 @@ import org.europa.together.domain.LogLevel;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @SuppressWarnings("unchecked")
 public class PermissionDOTest {

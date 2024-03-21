@@ -1,14 +1,13 @@
 package org.europa.together.application.acl;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import org.europa.together.application.JdbcActions;
+import org.europa.together.JUnit5Preperator;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.Logger;
@@ -34,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SuppressWarnings("unchecked")
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, JUnit5Preperator.class})
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class AccountHbmDAOTest {
 
@@ -49,7 +48,8 @@ public class AccountHbmDAOTest {
             + " CASCADE;";
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
-    private static DatabaseActions jdbcActions = new JdbcActions();
+    private static DatabaseActions jdbcActions
+            = JUnit5Preperator.JDBC_CONNECTION;
 
     @Autowired
     private AccountDAO accountDAO;
@@ -59,8 +59,10 @@ public class AccountHbmDAOTest {
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() throws Exception {
-        Assumptions.assumeTrue(jdbcActions.connect("test"), "JDBC DBMS Connection failed.");
+        Assumptions.assumeTrue(JUnit5Preperator.isConnected(), "JDBC DBMS Connection failed.");
         jdbcActions.executeSqlFromClasspath(FILE);
+
+        LOGGER.log("Assumptions passed ...\n\n", LogLevel.DEBUG);
     }
 
     @AfterAll
