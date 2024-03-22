@@ -7,10 +7,8 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.europa.together.EmbeddedGrizzly;
 import org.europa.together.JUnit5Preperator;
 import org.europa.together.application.JacksonJsonTools;
-import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.JsonTools;
@@ -19,7 +17,6 @@ import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.domain.acl.PermissionDO;
-import org.europa.together.domain.acl.PermissionId;
 import org.europa.together.domain.acl.ResourcesDO;
 import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
@@ -63,17 +60,15 @@ public class PermissionServiceIT {
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        Assumptions.assumeTrue(JUnit5Preperator.isConnected(), "JDBC DBMS Connection failed.");
+        Assumptions.assumeTrue(
+                JUnit5Preperator.isConnected(), "JDBC DBMS Connection failed.");
 
-        try {
-            server = EmbeddedGrizzly.startServer();
-            ClientConfig config = new ClientConfig();
-            Client client = ClientBuilder.newClient(config);
-            target = client.target(EmbeddedGrizzly.BASE_URI);
-        } catch (Exception ex) {
-            LOGGER.catchException(ex);
-        }
-        Assumptions.assumeTrue(server.isStarted(), "Starting Grizzly Server failed.");
+        Assumptions.assumeTrue(
+                JUnit5Preperator.startServer(), "Starting Grizzly Server failed.");
+
+        server = JUnit5Preperator.SERVER;
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        target = client.target(JUnit5Preperator.BASE_URI);
     }
 
     @AfterAll
@@ -211,8 +206,8 @@ public class PermissionServiceIT {
     void updatePermissionStatus404() {
         LOGGER.log("TEST CASE: updatePermission() 404 : NOT FOUND", LogLevel.DEBUG);
 
-        PermissionDO permission = new PermissionDO();
-        permission.setPermissionId(new PermissionId(new ResourcesDO("NotExist"), new RolesDO("any")));
+        PermissionDO permission = new PermissionDO(
+                new RolesDO("any"), new ResourcesDO("NotExist"));
 
         Response response = target
                 .path(API_PATH)
@@ -252,9 +247,7 @@ public class PermissionServiceIT {
 
         ResourcesDO resource = new ResourcesDO("Sample");
         resource.setView("update");
-        PermissionDO permission = new PermissionDO(new PermissionId(
-                resource, new RolesDO("Temp")
-        ));
+        PermissionDO permission = new PermissionDO(new RolesDO("Temp"), resource);
         permission.setChange(true);
         permission.setCreate(true);
         permission.setDelete(true);

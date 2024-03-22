@@ -5,7 +5,6 @@ import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;
 import org.europa.together.domain.acl.PermissionDO;
-import org.europa.together.domain.acl.PermissionId;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Repository;
  * @since 1.0
  */
 @Repository
-public interface PermissionDAO extends GenericDAO<PermissionDO, PermissionId> {
+public interface PermissionDAO extends GenericDAO<PermissionDO, String> {
 
     /**
      * Override the find() method to fetch a permission by the given id.
@@ -29,6 +28,13 @@ public interface PermissionDAO extends GenericDAO<PermissionDO, PermissionId> {
      */
     @API(status = STABLE, since = "1.0")
     PermissionDO find(String permissionId);
+
+    /**
+     * Override the find() method to fetch a permission by the given roleName,
+     * resource and view.
+     */
+    @API(status = STABLE, since = "1.0")
+    PermissionDO find(String roleName, String resource, String view);
 
     /**
      * List all permissions of a role. If a role not exist the result will be an

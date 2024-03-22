@@ -7,10 +7,8 @@ import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.europa.together.EmbeddedGrizzly;
 import org.europa.together.JUnit5Preperator;
 import org.europa.together.application.JacksonJsonTools;
-import org.europa.together.application.JdbcActions;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.DatabaseActions;
 import org.europa.together.business.JsonTools;
@@ -62,17 +60,15 @@ public class RoleServiceIT {
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() {
-        Assumptions.assumeTrue(JUnit5Preperator.isConnected(), "JDBC DBMS Connection failed.");
+        Assumptions.assumeTrue(
+                JUnit5Preperator.isConnected(), "JDBC DBMS Connection failed.");
 
-        try {
-            server = EmbeddedGrizzly.startServer();
-            ClientConfig config = new ClientConfig();
-            Client client = ClientBuilder.newClient(config);
-            target = client.target(EmbeddedGrizzly.BASE_URI);
-        } catch (Exception ex) {
-            LOGGER.catchException(ex);
-        }
-        Assumptions.assumeTrue(server.isStarted(), "Starting Grizzly Server faild.");
+        Assumptions.assumeTrue(
+                JUnit5Preperator.startServer(), "Starting Grizzly Server failed.");
+
+        server = JUnit5Preperator.SERVER;
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        target = client.target(JUnit5Preperator.BASE_URI);
     }
 
     @AfterAll

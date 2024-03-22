@@ -7,7 +7,6 @@ import org.europa.together.domain.LogLevel;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 @SuppressWarnings("unchecked")
 public class PermissionDOTest {
@@ -45,8 +44,8 @@ public class PermissionDOTest {
         RolesDO role = new RolesDO("test");
         ResourcesDO resource = new ResourcesDO("document");
 
-        PermissionDO first = new PermissionDO(new PermissionId(resource, role));
-        PermissionDO second = new PermissionDO(new PermissionId(resource, role));
+        PermissionDO first = new PermissionDO(role, resource);
+        PermissionDO second = new PermissionDO(role, resource);
 
         assertFalse(first.equals(second));
     }

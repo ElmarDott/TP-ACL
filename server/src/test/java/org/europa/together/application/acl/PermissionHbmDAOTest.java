@@ -13,7 +13,6 @@ import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.domain.acl.PermissionDO;
-import org.europa.together.domain.acl.PermissionId;
 import org.europa.together.domain.acl.ResourcesDO;
 import org.europa.together.domain.acl.RolesDO;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -99,12 +98,13 @@ public class PermissionHbmDAOTest {
         jdbcActions.executeSqlFromClasspath(FILE);
         RolesDO _role = rolesDAO.find("Guest");
         ResourcesDO _resource = resourcesDAO.find("Article", "teaser");
-        PermissionDO permission = permissionDAO.find(new PermissionId(_resource, _role));
+        PermissionDO permission = permissionDAO.find(
+                _role.getName(), _resource.getName(), _resource.getView());
 
         assertNotNull(permission);
-        assertEquals(permission.getPermissionId().getRole().getName(), "Guest");
-        assertEquals(permission.getPermissionId().getResource().getName(), "Article");
-        assertEquals(permission.getPermissionId().getResource().getView(), "teaser");
+        assertEquals(permission.getRole().getName(), "Guest");
+        assertEquals(permission.getResource().getName(), "Article");
+        assertEquals(permission.getResource().getView(), "teaser");
         assertTrue(permission.isRead());
         assertFalse(permission.isChange());
         assertFalse(permission.isCreate());
@@ -120,9 +120,9 @@ public class PermissionHbmDAOTest {
         PermissionDO permission = permissionDAO.find(id);
         assertNotNull(permission);
 
-        String role = permission.getPermissionId().getRole().getName();
-        String resource = permission.getPermissionId().getResource().getName();
-        String view = permission.getPermissionId().getResource().getView();
+        String role = permission.getRole().getName();
+        String resource = permission.getResource().getName();
+        String view = permission.getResource().getView();
 
         assertEquals(role, "Guest");
         assertEquals(resource, "Article");
@@ -139,8 +139,7 @@ public class PermissionHbmDAOTest {
 
         assertTrue(rolesDAO.create(role));
         assertTrue(resourcesDAO.create(resource));
-        PermissionDO permission = new PermissionDO(
-                new PermissionId(resource, role));
+        PermissionDO permission = new PermissionDO(role, resource);
 
         assertTrue(permissionDAO.create(permission));
     }
@@ -152,10 +151,8 @@ public class PermissionHbmDAOTest {
         jdbcActions.executeSqlFromClasspath(FILE);
         resource = resourcesDAO.find("Document", "default");
 
-        PermissionDO permission_A = new PermissionDO(
-                new PermissionId(resource, rolesDAO.find("Moderator")));
-        PermissionDO permission_B = new PermissionDO(
-                new PermissionId(resource, rolesDAO.find("Guest")));
+        PermissionDO permission_A = new PermissionDO(rolesDAO.find("Moderator"), resource);
+        PermissionDO permission_B = new PermissionDO(rolesDAO.find("Guest"), resource);
 
         assertTrue(permissionDAO.create(permission_A));
         assertTrue(permissionDAO.create(permission_B));
@@ -168,10 +165,8 @@ public class PermissionHbmDAOTest {
         assertTrue(rolesDAO.create(role));
         assertTrue(resourcesDAO.create(resource));
 
-        PermissionDO permission_A = new PermissionDO(
-                new PermissionId(resource, role));
-        PermissionDO permission_B = new PermissionDO(
-                new PermissionId(resource, role));
+        PermissionDO permission_A = new PermissionDO(role, resource);
+        PermissionDO permission_B = new PermissionDO(role, resource);
 
         assertTrue(permissionDAO.create(permission_A));
         assertThrows(Exception.class, () -> {
@@ -185,7 +180,7 @@ public class PermissionHbmDAOTest {
 
         jdbcActions.executeSqlFromClasspath(FILE);
         PermissionDO permission = permissionDAO.find("eb7bb730-95a0-45ac-983c-258b7a56f1f4");
-        permissionDAO.delete(permission.getPermissionId());
+        permissionDAO.delete(permission.getUuid());
     }
 
     @Test
@@ -195,7 +190,7 @@ public class PermissionHbmDAOTest {
         jdbcActions.executeSqlFromClasspath(FILE);
         PermissionDO permission = permissionDAO.find("5d1da892-6316-4781-94ea-d82d8a15e350");
         permission.setDelete(false);
-        permissionDAO.update(permission.getPermissionId(), permission);
+        permissionDAO.update(permission.getUuid(), permission);
 
         assertFalse(permissionDAO.find("5d1da892-6316-4781-94ea-d82d8a15e350").isDelete());
     }

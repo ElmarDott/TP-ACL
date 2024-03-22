@@ -21,7 +21,6 @@ import org.europa.together.business.acl.RolesDAO;
 import org.europa.together.domain.JpaPagination;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.PermissionDO;
-import org.europa.together.domain.acl.PermissionId;
 import org.europa.together.exceptions.JsonProcessingException;
 import org.europa.together.utils.acl.Constraints;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,14 +138,14 @@ public class PermissionService {
     ) {
         Response response = null;
         try {
-            permissionDAO.update(permission.getPermissionId(), permission);
+            permissionDAO.update(permission.getUuid(), permission);
             response = Response.status(Response.Status.ACCEPTED).build();
 
         } catch (Exception ex) {
             String exception = ex.getClass().getSimpleName();
             Response.Status status = Response.Status.INTERNAL_SERVER_ERROR;
 
-            if (exception.equals("DAOException")) {
+            if (exception.equals("EmptyResultDataAccessException")) {
                 status = Response.Status.NOT_FOUND;
             }
 
@@ -163,20 +162,19 @@ public class PermissionService {
     ) {
         Response response = null;
         try {
-            PermissionId id = entity.getPermissionId();
-            PermissionDO permission = new PermissionDO(new PermissionId(
-                    resourcesDAO.find(id.getResource().getName(), id.getResource().getView()),
-                    rolesDAO.find(id.getRole().getName())
-            ));
+            PermissionDO permission = new PermissionDO(
+                    rolesDAO.find(entity.getRole().getName()),
+                    resourcesDAO.find(entity.getResource().getName(), entity.getResource().getView())
+            );
             permission.setUuid(entity.getUuid());
             permission.setChange(entity.isChange());
             permission.setCreate(entity.isCreate());
             permission.setDelete(entity.isDelete());
             permission.setRead(entity.isRead());
 
-            LOGGER.log("Service: " + permission.getPermissionId().getRole().toString(),
+            LOGGER.log("Service: " + permission.getRole().toString(),
                     LogLevel.DEBUG);
-            LOGGER.log("Service: " + permission.getPermissionId().getResource().toString(),
+            LOGGER.log("Service: " + permission.getResource().toString(),
                     LogLevel.DEBUG);
             LOGGER.log("Service: " + permission.toString(), LogLevel.DEBUG);
 
@@ -201,7 +199,7 @@ public class PermissionService {
         Response response = null;
         try {
             PermissionDO selection = permissionDAO.find(permissionId);
-            permissionDAO.delete(selection.getPermissionId());
+            permissionDAO.delete(selection.getUuid());
             response = Response.status(Response.Status.GONE).build();
 
         } catch (Exception ex) {

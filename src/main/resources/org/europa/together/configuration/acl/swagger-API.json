@@ -635,11 +635,14 @@
       "PermissionDO" : {
         "type" : "object",
         "properties" : {
-          "permissionId" : {
-            "$ref" : "#/components/schemas/PermissionId"
-          },
           "uuid" : {
             "type" : "string"
+          },
+          "role" : {
+            "$ref" : "#/components/schemas/RolesDO"
+          },
+          "resource" : {
+            "$ref" : "#/components/schemas/ResourcesDO"
           },
           "read" : {
             "type" : "boolean"
@@ -652,17 +655,6 @@
           },
           "delete" : {
             "type" : "boolean"
-          }
-        }
-      },
-      "PermissionId" : {
-        "type" : "object",
-        "properties" : {
-          "role" : {
-            "$ref" : "#/components/schemas/RolesDO"
-          },
-          "resource" : {
-            "$ref" : "#/components/schemas/ResourcesDO"
           }
         }
       },

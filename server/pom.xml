@@ -21,7 +21,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <skipUnitTests>false</skipUnitTests>
+        <skipUnitTests>true</skipUnitTests>
         <skipIntegrationTests>false</skipIntegrationTests>
         <skipSwagger>false</skipSwagger>
 

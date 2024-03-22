@@ -3,9 +3,12 @@ package org.europa.together.domain.acl;
 import java.io.Serializable;
 import java.util.Objects;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import org.europa.together.utils.StringUtils;
@@ -37,11 +40,20 @@ public class PermissionDO implements Serializable {
      */
     public static final String TABLE_NAME = "ACL_PERMISSIONS";
 
-    @EmbeddedId
-    private PermissionId permissionId;
-
+    @Id
     @Column(name = "IDX", unique = true, nullable = false)
     private String uuid;
+
+    @ManyToOne
+    @JoinColumn(name = "ROLE_NAME")
+    private RolesDO role;
+
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name = "RESOURCE_RESOURCE"),
+        @JoinColumn(name = "RESOURCE_TEMPLATE")
+    })
+    private ResourcesDO resource;
 
     @Column(name = "DO_READ", nullable = false)
     private boolean read = false;
@@ -65,11 +77,13 @@ public class PermissionDO implements Serializable {
     /**
      * Constructor.
      *
-     * @param permissionId as PermissionId
+     * @param role as RoleDO
+     * @param resource as ResourceDO
      */
-    public PermissionDO(final PermissionId permissionId) {
-        this.permissionId = permissionId;
+    public PermissionDO(final RolesDO role, final ResourcesDO resource) {
         this.uuid = StringUtils.generateUUID();
+        this.role = role;
+        this.resource = resource;
     }
 
     @Override
@@ -87,8 +101,7 @@ public class PermissionDO implements Serializable {
                 success = true;
             } else {
                 final PermissionDO other = (PermissionDO) obj;
-                if (Objects.equals(this.permissionId, other.permissionId)
-                        && Objects.equals(this.uuid, other.uuid)) {
+                if (Objects.equals(this.uuid, other.uuid)) {
                     success = true;
                 }
             }
@@ -99,8 +112,9 @@ public class PermissionDO implements Serializable {
     @Override
     public String toString() {
         return "PermissionDO{"
-                + "permissionId=" + permissionId
-                + ", uuid=" + uuid
+                + "uuid=" + uuid
+                + ", role=" + role
+                + ", resource" + resource
                 + ", read=" + read
                 + ", create=" + create
                 + ", change=" + change
@@ -128,21 +142,40 @@ public class PermissionDO implements Serializable {
     }
 
     /**
-     * Get the PremissionID. Primary Key.
+     * Get the resources for a permission.
      *
-     * @return permissionId as Object
+     * @return a resource as Object.
      */
-    public PermissionId getPermissionId() {
-        return permissionId;
+    public ResourcesDO getResource() {
+        return resource;
     }
 
     /**
-     * Set the PremissionID. Primary Key.
+     * Set the resources for a permission.
      *
-     * @param permissionId as Object
+     * @param resource as Object
      */
-    public void setPermissionId(final PermissionId permissionId) {
-        this.permissionId = permissionId;
+    public void setResource(final ResourcesDO resource) {
+        this.resource = resource;
+    }
+
+    /**
+     * Get the role for a permission.
+     *
+     * @return role as object
+     */
+    public RolesDO getRole() {
+        return role;
+    }
+
+    /**
+     *
+     * Set the role for a permission.
+     *
+     * @param role as Object
+     */
+    public void setRole(final RolesDO role) {
+        this.role = role;
     }
 
     /**
