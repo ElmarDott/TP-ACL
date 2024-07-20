@@ -27,6 +27,9 @@
         <skipJarSigner>false</skipJarSigner>
         <skipJavaDoc>false</skipJavaDoc>
         <skipCoveralls>false</skipCoveralls>
+
+        <!-- Docker execution -->
+        <skip.start.postgres>true</skip.start.postgres>
     </properties>
 
     <modules>
@@ -58,7 +61,7 @@
                 <!-- require Spring Framework 6.0 or above -->
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-bom</artifactId>
-                <version>6.1.4</version>
+                <version>6.3.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -69,7 +72,7 @@
         <dependency>
             <groupId>io.github.together.modules</groupId>
             <artifactId>core</artifactId>
-            <version>3.1.0</version>
+            <version>3.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
