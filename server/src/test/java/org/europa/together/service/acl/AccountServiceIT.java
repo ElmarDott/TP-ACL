@@ -50,7 +50,7 @@ public class AccountServiceIT {
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
     private static final String API_PATH
-            = "/acl/" + Constraints.REST_API_VERSION + "/account";
+            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION + "/account";
 
     private static DatabaseActions jdbcActions
             = JUnit5Preperator.JDBC_CONNECTION;

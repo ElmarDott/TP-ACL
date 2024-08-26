@@ -50,7 +50,7 @@ public class ResourceServiceIT {
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
     private final String API_PATH
-            = "/acl/" + Constraints.REST_API_VERSION + "/resource";
+            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION + "/resource";
 
     private static DatabaseActions jdbcActions
             = JUnit5Preperator.JDBC_CONNECTION;

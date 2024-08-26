@@ -50,7 +50,7 @@ public class PermissionServiceIT {
     private static final String FILE
             = "org/europa/together/sql/acl/testdata_ACL.sql";
     private final String API_PATH
-            = "/acl/" + Constraints.REST_API_VERSION + "/permission";
+            = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION + "/permission";
 
     private static DatabaseActions jdbcActions
             = JUnit5Preperator.JDBC_CONNECTION;

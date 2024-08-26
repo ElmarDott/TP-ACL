@@ -13,6 +13,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import org.europa.together.application.JavaCryptoTools;
+import org.europa.together.business.CryptoTools;
+import org.europa.together.domain.HashAlgorithm;
 import org.europa.together.utils.StringUtils;
 import org.europa.together.utils.Constraints;
 import org.hibernate.annotations.CreationTimestamp;
@@ -126,7 +129,7 @@ public class AccountDO implements Serializable {
     public String toString() {
         return "AccountDO{"
                 + "email=" + email
-                + ", password=" + password
+                + ", password=****"
                 + ", role=" + role
                 + ", registrationDate=" + registered
                 + ", verificationCode=" + verificationCode
@@ -157,7 +160,7 @@ public class AccountDO implements Serializable {
     }
 
     /**
-     * Get the password (SHA-512) of an Account.
+     * Get the SALTED password (SHA3-512) of an Account.
      *
      * @return password as String
      */
@@ -166,12 +169,17 @@ public class AccountDO implements Serializable {
     }
 
     /**
-     * Set the password (SHA-512) of an Account.
+     * Set the password (SHA3-512) of an Account. <br>
+     * cryptoTools.calculateHash(<br>
+     * account.getVerificationCode() + accountID, HashAlgorithm.SHA3512);
      *
      * @param password as String
      */
     public void setPassword(final String password) {
-        this.password = password;
+        CryptoTools cryptoTools = new JavaCryptoTools();
+        String pwd = cryptoTools.calculateHash(
+                this.getVerificationCode() + password, HashAlgorithm.SHA3512);
+        this.password = pwd;
     }
 
     /**

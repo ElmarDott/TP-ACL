@@ -20,8 +20,8 @@ public class AccountDOTest {
         LOGGER.log("TEST CASE: domainObject()", LogLevel.DEBUG);
 
         assertThat(AccountDO.class, hasValidBeanConstructor());
-        assertThat(AccountDO.class, hasValidGettersAndSetters());
-        assertThat(AccountDO.class, hasValidBeanToString());
+        assertThat(AccountDO.class, hasValidGettersAndSettersExcluding("password"));
+        assertThat(AccountDO.class, hasValidBeanToStringExcluding("password"));
         assertThat(AccountDO.class, hasValidBeanHashCodeFor("email"));
         assertThat(AccountDO.class, hasValidBeanEqualsFor("email"));
     }
