@@ -2,15 +2,49 @@
 <project name="ACL - Client">
     <bannerLeft>
         <name>ACL - together platform</name>
-        <src>../../../site/images/logo.gif</src>
+        <src>../images/logo.gif</src>
         <href>index.html</href>
     </bannerLeft>
     <body>
+        <menu ref="parent" />
+
         <menu name="Resources">
+            <item name="GitHub Repository" href="https://github.com/ElmarDott/TP-ACL" target="_blank" />
+            <item name="Follow on Twitter" href="https://twitter.com/ElmarDott" target="_blank" />
+
+        </menu>
+
+        <menu name="Metrics">
             <item name="OWASP Dependency Check" href="dependency-check-report.html" target="_blank" />
             <item name="jaCoCo Report" href="jacoco/index.html" target="_blank" />
             <item name="Clover Report" href="clover/index.html" target="_blank" />
         </menu>
+
         <menu ref="reports" />
+
+        <footer><![CDATA[<p style="text-align:center; font-weight:bold;">&copy; <span id="year"></span> <a href="https://elmar-dott.com" target="_blank">Elmar Dott Consulting</a></p>
+<script>document.getElementById("year").innerHTML = new Date().getFullYear();</script>]]></footer>
     </body>
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>2.0.0-M8</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>false</topBarEnabled>
+            <sideBarEnabled>true</sideBarEnabled>
+            <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+        </fluidoSkin>
+        <matomo>
+            <siteId>together-platform</siteId>
+            <url>https://analytics.elmar-dott.com</url>
+            <options>
+                <disableCookies />
+                <trackPageView />
+                <enableLinkTracking />
+            </options>
+        </matomo>
+    </custom>
 </project>

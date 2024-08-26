@@ -6,11 +6,52 @@
         <href>index.html</href>
     </bannerLeft>
     <body>
-        <menu ref="parent" />
-        <menu name="Resources">
-            <item name="GitHub Repository" href="https://github.com/ElmarDott/TP-ACL" target="_blank" />
-            <item name="Follow on Twitter" href="https://twitter.com/ElmarDott" target="_blank" />
+        <menu name="Parent">
+            <item name="together Platform - Build Workflow" href="https://together-platform.org/tp-cm/" target="_blank" />
+            <item name="together Platform - TP-CORE" href="https://together-platform.org/tp-core/" target="_blank" />
         </menu>
+
+        <menu ref="modules" />
+
+        <menu name="Resources">
+            <item name="Follow on X" href="https://twitter.com/ElmarDott" target="_blank" />
+            <item name="GitHub Repository" href="https://github.com/ElmarDott/TP-ACL" target="_blank" />
+        </menu>
+
         <menu ref="reports" />
+
+        <menu name="Documentation">
+            <item name="01 " href="[ACL-01]-Register.html"/>
+            <item name="02 " href="[ACL-02]-Login.html"/>
+            <item name="03 " href="[ACL-03]-Logout.html"/>
+            <item name="04 " href="[ACL-04]-Reset-Password.html"/>
+            <item name="05 " href="[ACL-05]-Activate-Deactivate-Accounts.html"/>
+            <item name="06 " href="[ACL-06]-Configuration.html"/>
+        </menu>
+
+        <footer><![CDATA[<p style="text-align:center; font-weight:bold;">&copy; <span id="year"></span> <a href="https://elmar-dott.com" target="_blank">Elmar Dott Consulting</a></p>
+<script>document.getElementById("year").innerHTML = new Date().getFullYear();</script>]]></footer>
     </body>
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>2.0.0-M8</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>false</topBarEnabled>
+            <sideBarEnabled>true</sideBarEnabled>
+            <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+        </fluidoSkin>
+        <matomo>
+            <siteId>together-platform</siteId>
+            <url>https://analytics.elmar-dott.com</url>
+            <options>
+                <disableCookies />
+                <trackPageView />
+                <enableLinkTracking />
+            </options>
+        </matomo>
+    </custom>
 </project>
