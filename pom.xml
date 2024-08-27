@@ -51,8 +51,8 @@
 
     <!-- Jira issue management -->
     <issueManagement>
-        <system>IssueTracking@Github</system>
-        <url><![CDATA[https://github.com/ElmarDott/TP-ACL/issues?sort=created&direction=desc&state=open]]></url>
+        <system>Redmine</system>
+        <url>https://issues.elmar-dott.com/projects/tp-acl</url>
     </issueManagement>
 
     <dependencyManagement>

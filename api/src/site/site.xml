@@ -14,7 +14,6 @@
         </menu>
 
         <menu name="Metrics">
-            <item name="OWASP Dependency Check" href="dependency-check-report.html" target="_blank" />
             <item name="jaCoCo Report" href="jacoco/index.html" target="_blank" />
             <item name="Clover Report" href="clover/index.html" target="_blank" />
         </menu>
@@ -28,7 +27,7 @@
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
-        <version>2.0.0-M8</version>
+        <version>2.0.0-M10</version>
     </skin>
     <custom>
         <fluidoSkin>
