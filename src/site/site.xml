@@ -22,6 +22,7 @@
         <menu name="Resources">
             <item name="Java Doc - API" href="apidocs/index.html" target="_blank" />
             <item name="OWASP Dependency Check" href="dependency-check-report.html" target="_blank" />
+            <item name="Release Notes" href="release-notes.html" />
 
             <item name="Follow on X" href="https://twitter.com/ElmarDott" target="_blank" />
             <item name="GitHub Repository" href="https://github.com/ElmarDott/TP-ACL" target="_blank" />

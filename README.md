@@ -12,10 +12,13 @@
 ## Getting Started
 Access Control List. Functions - Release: 1.0
 
- * [ACL-01] Configure Module
- * [ACL-02] Registration
- * [ACL-03] Login / Logout
+ * [ACL-00] Domain Desription
+ * [ACL-01] Registration
+ * [ACL-02] Login
+ * [ACL-03] Logout
  * [ACL-04] Reset Password
+ * [ACL-05] Activate / Deactivate Accounts
+ * [ACL-06] Configure Module
 
 Please also check out the [Wiki](https://github.com/ElmarDott/TP-ACL/wiki/home) for further information.
 
@@ -47,7 +50,7 @@ Docker was chosen for an simple and fast database setup. In the case you wish to
   * docker start postgres
   * docker stop postgres
 
-To create default user and schemata (also for testing), you are be able to use [TP-CM/dbms/src/sql/initial_postgresql.sql](https://github.com/ElmarDott/TP-CM/blob/master/dbms/src/sql/initial_postgresql.sql) script. 
+To create default user and schemata (also for testing), you are be able to use [TP-CM/dbms/src/sql/initial_postgresql.sql](https://github.com/ElmarDott/TP-CM/blob/master/dbms/src/sql/initial_postgresql.sql) script.
 
 ### Build
 
@@ -97,10 +100,3 @@ Feel free open a pull request or to send a feature request by e-mail in the case
 Mistakes happen. But we only able to fix them, when we you inform us you found a bug. Do not hesitate to send a report in the way you feel common. I try to give as much as possible fast & direct support.
 
 In the case you like this project, let me know it and rate it with a star.
-
-## Release Notes
-
-|Version | Comment
-|--------|----------------------------------------------------------------------
-| 1.0    | in process
-|        | - Add Functionality: Domain Model
