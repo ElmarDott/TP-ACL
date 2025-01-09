@@ -6,7 +6,7 @@ import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;
 import org.europa.together.domain.acl.LoginDO;
 import org.europa.together.exceptions.DAOException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 /**
  * Every account can have multiply logins. The logins track the last activity to
@@ -17,7 +17,8 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  * @since 1.0
  */
-@Repository
+@API(status = STABLE, since = "1.0", consumers = "LoginHbmDAO")
+@Component
 public interface LoginDAO extends GenericDAO<LoginDO, String> {
 
     /**

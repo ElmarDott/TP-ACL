@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-public class ResetPassword {
+public class ResetUserPassword {
 
     //forget password
     //change passord

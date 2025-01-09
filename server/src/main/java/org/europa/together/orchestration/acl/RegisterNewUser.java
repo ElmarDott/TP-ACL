@@ -31,9 +31,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Path("acl/" + Constraints.REST_API_VERSION)
-public class Registration {
+public class RegisterNewUser {
 
-    private static final Logger LOGGER = new LogbackLogger(Registration.class);
+    private static final Logger LOGGER = new LogbackLogger(RegisterNewUser.class);
     private static WebTarget target;
     private static final String API_PATH
             = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
@@ -44,7 +44,7 @@ public class Registration {
     @Autowired
     private MailClient mailClient;
 
-    public Registration() {
+    public RegisterNewUser() {
         LOGGER.log("instance class", LogLevel.INFO);
         // check if account not exist
         // add new account (deactivate)

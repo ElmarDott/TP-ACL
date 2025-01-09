@@ -6,7 +6,7 @@ import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;
 import org.europa.together.domain.acl.ResourcesDO;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 /**
  * A resource is linked to a permission. This avoid duplications and simplify
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  * @since 1.0
  */
-@Repository
+@API(status = STABLE, since = "1.0", consumers = "ResourcesHbmDAO")
+@Component
 public interface ResourcesDAO extends GenericDAO<ResourcesDO, String> {
 
     /**

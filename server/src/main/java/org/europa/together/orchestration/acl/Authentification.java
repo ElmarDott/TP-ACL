@@ -29,9 +29,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Path("acl/" + Constraints.REST_API_VERSION)
-public class LoginLogout {
+public class Authentification {
 
-    private static final Logger LOGGER = new LogbackLogger(LoginLogout.class);
+    private static final Logger LOGGER = new LogbackLogger(Authentification.class);
 
     @Autowired
     private AccountDAO accountDAO;
@@ -45,7 +45,7 @@ public class LoginLogout {
     /**
      * Default Constructor.
      */
-    public LoginLogout() {
+    public Authentification() {
         LOGGER.log("instance class", LogLevel.INFO);
     }
 

@@ -11,7 +11,6 @@ import org.europa.together.application.GenericHbmDAO;
 import org.europa.together.application.LogbackLogger;
 import org.europa.together.business.Logger;
 import org.europa.together.business.acl.AccountDAO;
-import org.europa.together.domain.ConfigurationDO;
 import org.europa.together.domain.LogLevel;
 import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.RolesDO;
@@ -23,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String> implements AccountDAO {
+public class AccountHbmDAO extends GenericHbmDAO<AccountDO, String>
+        implements AccountDAO {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = new LogbackLogger(AccountDAO.class);

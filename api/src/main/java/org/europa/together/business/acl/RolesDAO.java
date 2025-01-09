@@ -5,7 +5,7 @@ import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;
 import org.europa.together.domain.acl.RolesDO;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 /**
  * Every account is just with one role related. The security design do not
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  * @since 1.0
  */
-@Repository
+@API(status = STABLE, since = "1.0", consumers = "RolesHbmDAO")
+@Component
 public interface RolesDAO extends GenericDAO<RolesDO, String> {
 
     /**

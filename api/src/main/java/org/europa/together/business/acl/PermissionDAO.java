@@ -5,7 +5,7 @@ import org.apiguardian.api.API;
 import static org.apiguardian.api.API.Status.STABLE;
 import org.europa.together.business.GenericDAO;
 import org.europa.together.domain.acl.PermissionDO;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 /**
  * Permissions are linked to roles. Every permission is just to one resource
@@ -17,7 +17,8 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  * @since 1.0
  */
-@Repository
+@API(status = STABLE, since = "1.0", consumers = "PermissionHbmDAO")
+@Component
 public interface PermissionDAO extends GenericDAO<PermissionDO, String> {
 
     /**

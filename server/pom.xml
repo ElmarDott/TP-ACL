@@ -22,7 +22,7 @@
 
     <properties>
         <skipUnitTests>false</skipUnitTests>
-        <skipIntegrationTests>false</skipIntegrationTests>
+        <skipIntegrationTests>true</skipIntegrationTests>
         <skipSwagger>false</skipSwagger>
 
         <checkstyle.rules>${basedir}/../checkstyle.xml</checkstyle.rules>

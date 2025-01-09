@@ -9,3 +9,10 @@ The TP-ACL domain is setup by 5 entities: [Login](https://git.elmar-dott.com/scm
 * An Role can have multiply Permissions
 * An Account has exact one Role
 * An Account has multiple Logins
+
+## Processes
+* Registration
+* Login / Logout
+* Change / Reset Password
+* Update Module Configuration
+* Activate / Deactivate Accounts

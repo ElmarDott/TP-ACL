@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class RolesHbmDAO extends GenericHbmDAO<RolesDO, String> implements RolesDAO {
+public class RolesHbmDAO extends GenericHbmDAO<RolesDO, String>
+        implements RolesDAO {
 
     private static final long serialVersionUID = 5L;
     private static final Logger LOGGER = new LogbackLogger(RolesDAO.class);

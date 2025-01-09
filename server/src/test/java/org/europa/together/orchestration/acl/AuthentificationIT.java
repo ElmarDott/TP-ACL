@@ -1,6 +1,5 @@
 package org.europa.together.orchestration.acl;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
@@ -20,7 +19,7 @@ import org.europa.together.domain.acl.RolesDO;
 import org.europa.together.utils.acl.Constraints;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherAssert.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,9 +36,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SuppressWarnings("unchecked")
 @ExtendWith({SpringExtension.class, JUnit5Preperator.class})
 @ContextConfiguration(locations = {"/applicationContext.xml"})
-public class LoginLogoutIT {
+public class AuthentificationIT {
 
-    private static final Logger LOGGER = new LogbackLogger(LoginLogoutIT.class);
+    private static final Logger LOGGER = new LogbackLogger(AuthentificationIT.class);
     private static final String FLUSH_TABLE
             = "TRUNCATE "
             + RolesDO.TABLE_NAME + ", "

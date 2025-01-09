@@ -21,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class LoginHbmDAO extends GenericHbmDAO<LoginDO, String> implements LoginDAO {
+public class LoginHbmDAO extends GenericHbmDAO<LoginDO, String>
+        implements LoginDAO {
 
     private static final long serialVersionUID = 2L;
     private static final Logger LOGGER = new LogbackLogger(LoginDAO.class);

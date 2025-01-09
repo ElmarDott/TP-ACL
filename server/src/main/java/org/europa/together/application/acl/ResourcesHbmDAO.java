@@ -24,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String> implements ResourcesDAO {
+public class ResourcesHbmDAO extends GenericHbmDAO<ResourcesDO, String>
+        implements ResourcesDAO {
 
     private static final long serialVersionUID = 4L;
     private static final Logger LOGGER = new LogbackLogger(ResourcesDAO.class);
