@@ -10,12 +10,14 @@ import org.europa.together.domain.acl.AccountDO;
 import org.europa.together.domain.acl.PermissionDO;
 import org.europa.together.domain.acl.ResourcesDO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the Authorization to access functions.
  */
-@Component
+@Repository
+@Transactional
 public class JakartaAuthorization implements Authorization {
 
     private static final Logger LOGGER = new LogbackLogger(JakartaAuthorization.class);

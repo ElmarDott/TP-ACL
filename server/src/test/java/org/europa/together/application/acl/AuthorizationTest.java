@@ -1,5 +1,6 @@
 package org.europa.together.application.acl;
 
+import java.sql.SQLException;
 import java.util.List;
 import org.europa.together.JUnit5Preperator;
 import org.europa.together.application.LogbackLogger;
@@ -43,7 +44,7 @@ public class AuthorizationTest {
             + " CASCADE;";
     private static final String FILE
             = "org/europa/together/sql/acl/auth.sql";
-    private static DatabaseActions jdbcActions
+    private static final DatabaseActions jdbcActions
             = JUnit5Preperator.JDBC_CONNECTION;
 
     @Autowired
@@ -55,6 +56,9 @@ public class AuthorizationTest {
     @Autowired
     private PermissionDAO permissionDAO;
 
+    @Autowired
+    private Authorization authorization;
+
     //<editor-fold defaultstate="collapsed" desc="Test Preparation">
     @BeforeAll
     static void setUp() throws Exception {
@@ -65,7 +69,8 @@ public class AuthorizationTest {
     }
 
     @AfterAll
-    static void tearDown() {
+    static void tearDown() throws Exception {
+        jdbcActions.executeQuery(FLUSH_TABLE);
     }
 
     @BeforeEach
@@ -73,31 +78,183 @@ public class AuthorizationTest {
     }
 
     @AfterEach
-    void testCaseTermination() throws Exception {
-        jdbcActions.executeQuery(FLUSH_TABLE);
+    void testCaseTermination() {
     }
     //</editor-fold>
 
     @Test
-    void exisitingUserHasNoPermission() {
-        LOGGER.log("exisitingUserHasNoPermission", LogLevel.DEBUG);
+    void exisitingUserHasPermission() {
+        LOGGER.log("exisitingUserHasPermission: access allowed", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("admin@sample.org");
+        LOGGER.log(account.toString(), LogLevel.DEBUG);
 
         ResourcesDO resource = resourcesDAO.find("ACL", "role");
         LOGGER.log(resource.toString(), LogLevel.DEBUG);
 
-        AccountDO account = accountDAO.find("moderator@sample.org");
+        String roleName = account.getRole().getName();
+        List<PermissionDO> permissions = permissionDAO
+                .listRolePermissions(roleName);
+
+        LOGGER.log("(" + permissions.size() + ") Permissions for Role " + roleName, LogLevel.DEBUG);
+        LOGGER.log(permissions.toString(), LogLevel.DEBUG);
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.READ);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void exisitingUserHasNoPermission() {
+        LOGGER.log("exisitingUserHasNoPermission: access denied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("guest@sample.org");
         LOGGER.log(account.toString(), LogLevel.DEBUG);
+
+        ResourcesDO resource = resourcesDAO.find("ACL", "account");
+        LOGGER.log(resource.toString(), LogLevel.DEBUG);
 
         String roleName = account.getRole().getName();
         List<PermissionDO> permissions = permissionDAO
                 .listRolePermissions(roleName);
+
         LOGGER.log("(" + permissions.size() + ") Permissions for Role " + roleName, LogLevel.DEBUG);
         LOGGER.log(permissions.toString(), LogLevel.DEBUG);
 
-        Authorization auth = new JakartaAuthorization();
-        boolean result = auth.accountHasPermissionForAction(
+        boolean result = authorization.accountHasPermissionForAction(
                 account, resource, JakartaAuthorization.READ);
+
         assertFalse(result);
     }
 
+    @Test
+    void notExistingUserAccessDenied() {
+        LOGGER.log("notExistingUserHasNoPermission: access denied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("notexist@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "login");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.READ);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void userAllocateResourceNotExist() {
+        LOGGER.log("userAllocateResourceNotExist: access denied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("guest@sample.org");
+        ResourcesDO resource = null;
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.READ);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void resourcesReadPermissionAllowed() {
+        LOGGER.log("resourcesReadPermissionAllowed", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "role");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.READ);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void resourcesCreatePermissionAllowed() {
+        LOGGER.log("resourcesCreatePermissionAllowed", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "role");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.CREATE);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void resourcesDeletePermissionAllowed() {
+        LOGGER.log("resourcesDeletePermissionAllowed", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "role");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.DELETE);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void resourcesChangePermissionAllowed() {
+        LOGGER.log("resourcesChangePermissionAllowed", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "role");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.CHANGE);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void resourcesReadPermissionDenied() {
+        LOGGER.log("resourcesReadPermissionDenied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "permission");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.READ);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void resourcesCreatePermissionDenied() {
+        LOGGER.log("resourcesCreatePermissionDenied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "permission");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.CREATE);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void resourcesDeletePermissionDenied() {
+        LOGGER.log("resourcesDeletePermissionDenied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "permission");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.DELETE);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void resourcesChangePermissionDenied() {
+        LOGGER.log("resourcesChangePermissionDenied", LogLevel.DEBUG);
+
+        AccountDO account = accountDAO.find("moderator@sample.org");
+        ResourcesDO resource = resourcesDAO.find("ACL", "permission");
+
+        boolean result = authorization.accountHasPermissionForAction(
+                account, resource, JakartaAuthorization.CHANGE);
+
+        assertFalse(result);
+    }
 }

@@ -7,9 +7,11 @@ import org.europa.together.domain.acl.ResourcesDO;
 import org.springframework.stereotype.Component;
 
 /**
- * Define the dynamic mechanism for the autorization to execute actions.
+ * @author elmar.dott@gmail.com
+ * @version 1.0
+ * @since 1.0
  */
-@API(status = STABLE, since = "1.0", consumers = "JakartaAuthorization")
+@API(status = STABLE, since = "3.0", consumers = "JakartaAuthorization")
 @Component
 public interface Authorization {
 
@@ -22,7 +24,7 @@ public interface Authorization {
      * @param action as String
      * @return true on successs
      */
-    @API(status = STABLE, since = "1.0")
     boolean accountHasPermissionForAction(final AccountDO account, final ResourcesDO resource,
             final String action);
+
 }
