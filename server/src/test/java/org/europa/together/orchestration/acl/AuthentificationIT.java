@@ -48,7 +48,7 @@ public class AuthentificationIT {
             + ResourcesDO.TABLE_NAME
             + " CASCADE;";
     private static final String FILE
-            = "org/europa/together/sql/acl/testdata_ACL.sql";
+            = "org/europa/together/sql/acl/auth.sql";
     private static final String API_PATH
             = Constraints.MODULE_NAME + "/" + Constraints.REST_API_VERSION;
 

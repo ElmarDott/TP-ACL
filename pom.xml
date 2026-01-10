@@ -14,7 +14,7 @@
     <parent>
         <groupId>io.github.together</groupId>
         <artifactId>build-workflow</artifactId>
-        <version>1.6-SNAPSHOT</version>
+        <version>1.6.2</version>
     </parent>
 
     <groupId>io.github.together.modules</groupId>
@@ -61,7 +61,7 @@
                 <!-- require Spring Framework 6.0 or above -->
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-bom</artifactId>
-                <version>6.4.2</version>
+                <version>7.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>io.github.together.modules</groupId>
             <artifactId>core</artifactId>
-            <version>3.2-SNAPSHOT</version>
+            <version>3.2.0</version>
         </dependency>
 
         <dependency>

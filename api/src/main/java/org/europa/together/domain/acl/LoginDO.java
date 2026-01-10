@@ -11,8 +11,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import org.europa.together.utils.StringUtils;
 import org.europa.together.utils.Constraints;
 import org.hibernate.annotations.CreationTimestamp;
@@ -50,11 +48,9 @@ public class LoginDO implements Serializable {
 
     @CreationTimestamp
     @Column(name = "LOGIN")
-    @Temporal(TemporalType.DATE)
     private Date login;
 
     @Column(name = "LOGOUT")
-    @Temporal(TemporalType.DATE)
     private Date logout;
 
     @Column(name = "IPADRESS")

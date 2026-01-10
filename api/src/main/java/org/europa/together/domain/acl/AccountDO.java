@@ -11,8 +11,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import org.europa.together.application.JavaCryptoTools;
 import org.europa.together.business.CryptoTools;
 import org.europa.together.domain.HashAlgorithm;
@@ -26,13 +24,11 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "ACL_ACCOUNT",
-        //CHECKSTYLE:OFF
         indexes = {
             @Index(columnList = "EMAIL", name = "acl_account_email"),
             @Index(columnList = "ROLE_NAME", name = "acl_account_role"),
             @Index(columnList = "VERIFICATION_CODE", name = "acl_account_verification")
         }
-//CHECKSTYLE:ON
 )
 public class AccountDO implements Serializable {
 
@@ -57,15 +53,12 @@ public class AccountDO implements Serializable {
 
     @CreationTimestamp
     @Column(name = "REGISTERED", nullable = false)
-    @Temporal(TemporalType.DATE)
     private Date registered;
 
     @Column(name = "VERIFIED")
-    @Temporal(TemporalType.DATE)
     private Date verified;
 
     @Column(name = "DEACTIVATED")
-    @Temporal(TemporalType.DATE)
     private Date deactivated;
 
     @Column(name = "VERIFICATION_CODE", unique = true, nullable = false)

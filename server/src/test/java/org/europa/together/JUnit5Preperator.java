@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.GLOBAL;
  * <b>USAGE: </b> @ExtendWith({JUnit5DbPreperator.class})
  */
 public class JUnit5Preperator
-        implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+        implements BeforeAllCallback {
 
     private static final Logger LOGGER = new LogbackLogger(JUnit5Preperator.class);
 
@@ -55,7 +55,6 @@ public class JUnit5Preperator
         LOGGER.log("TEST ENVIRONMENT prepared... \n", LogLevel.DEBUG);
     }
 
-    @Override
     public void close() {
         LOGGER.log("TEST ENVIRONMENT will be shut down.", LogLevel.DEBUG);
     }

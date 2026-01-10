@@ -72,7 +72,7 @@ public class Authentification {
 
             password = account.getPassword();
             String pwdComperator = cryptoTools.calculateHash(
-                    account.getVerificationCode() + loginPwd, HashAlgorithm.SHA3512);
+                    account.getVerificationCode() + loginPwd, HashAlgorithm.SHA512);
 
             if (password.equals(pwdComperator)) {
 
